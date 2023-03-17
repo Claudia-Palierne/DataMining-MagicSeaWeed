@@ -14,11 +14,9 @@ The data is not publicly available via an API.
 
 ## Requirements
 [List all the requirements and dependencies needed to run the code. Include a requirements.txt file with all the necessary packages and versions.]
-
-grequests == 
-BeautifulSoup == 
-Selenium (webdriver ; webdriver_manager) ==
-**un moment j'installe un truc ds le code frr je sais ce que c'est**
+`pip install requirements.txt`
+`pip install selenium`
+`pip install webdriver-manager`
 
 ## How to Run
 Install the required packages using pip install -r requirements.txt.
