@@ -10,6 +10,7 @@ WEBSITE_SURF_FORECAST = "https://magicseaweed.com/Israel-Surf-Forecast/90/"
 
 SINGLE_RESPONSE = 0
 
+# MEs noms de modules sont très bien
 
 def main():
 
