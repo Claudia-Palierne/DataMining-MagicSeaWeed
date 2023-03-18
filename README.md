@@ -14,8 +14,11 @@ The data is not publicly available via an API.
 
 ## Requirements
 [List all the requirements and dependencies needed to run the code. Include a requirements.txt file with all the necessary packages and versions.]
+
 `pip install requirements.txt`
+
 `pip install selenium`
+
 `pip install webdriver-manager`
 
 ## How to Run
@@ -38,11 +41,13 @@ The code can be run from command line or from any IDE like PyCharm.
 
 ## Results
 [Include a summary of the data that was scraped, including any interesting patterns or insights that were discovered.]
-Milestone 1 : For every beach on the coast of Israel and for every day of the week past the execution, the code prints the following information:
-* Temperature in Celsius
-* Amplitude of the waves in meter
-* Direction and power of the wind 
-* Clearness of the sky
+Milestone 1 : For every beach on the coast of Israel and for every 3 hours every day of the week past the execution, the code prints the following information:
+* weather ()
+* temperature (in Celsius)
+* swell (wave quality indicator)
+* rating (wave quality indicator)
+* steady_speed (one of two wind speed)
+* direction (indicators for wind direction)
 
 ## Future Work
 The next steps of this project will aim to store the printed values into a relevant data structure and perfom an analysis :
