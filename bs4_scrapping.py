@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 
 FAKE_USER_HEADER = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 '
                                   '(KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-
 RESPONSE_CODE_SUCCESS = 200
 BATCH_SIZE = 10
 
@@ -28,20 +27,3 @@ def list_urls_to_list_responses(urls):
         else:
             request_soup += [BeautifulSoup(response.content, "html.parser")]
     return request_soup
-
-    # responses_list = grequests.map(request_list, size=BATCH_SIZE)
-    # for response in responses_list:
-    #     if response.status_code != RESPONSE_CODE_SUCCESS:
-    #         response_index = responses_list.index(response)
-    #         url = urls[response_index]
-    #         # : logfile shit
-    #         raise ConnectionError(f'Failed requesting url: {url}')
-    #     else :
-    #
-    #
-    #
-    # # : Send a list of soup instead of list responses ?
-    # #  Maybe No cause sometimes we went different arguments to be sent to beautiful soup
-    # # Maybe yes cause we would like not have bs4 and grequests in main() script
-    #
-    # return responses_list
