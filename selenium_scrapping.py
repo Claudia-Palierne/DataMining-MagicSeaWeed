@@ -5,6 +5,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 TAG_NAME = 'a'
 CLASS_NAME = r'clearfix spot-list-link spot-list-link-forecast padding-sm nopadding-left nopadding-right'
+URL = "https://magicseaweed.com/Central-Tel-Aviv-Surfing/113/"
 
 
 def get_spot_beaches_urls(url):
@@ -41,6 +42,5 @@ def get_spot_beaches_urls(url):
 
 
 if __name__ == "__main__":
-    url = "https://magicseaweed.com/Central-Tel-Aviv-Surfing/113/"
-    beaches = get_spot_beaches_urls(url)
+    beaches = get_spot_beaches_urls(URL)
     print(beaches)
