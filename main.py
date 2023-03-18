@@ -13,6 +13,10 @@ FAKE_USER_HEADER = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_
 
 
 def extract_urls():
+    """
+    Extract the urls of every beach spot in the country.
+    :return: list of urls
+    """
     # Extract areas' urls
     surf_forecast_request = requests.get(WEBSITE_SURF_FORECAST, headers=FAKE_USER_HEADER)
     surf_forecast_soup = BeautifulSoup(surf_forecast_request.content, "html.parser")
@@ -25,6 +29,9 @@ def extract_urls():
 
 
 def main():
+    """
+    Web scrapping of the site MagicSeaWeed.
+    """
     beaches_url = extract_urls()
     beaches_soup = bs4_scrapping.list_urls_to_list_responses(beaches_url)
     for bs in beaches_soup:

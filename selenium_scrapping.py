@@ -8,6 +8,11 @@ CLASS_NAME = r'clearfix spot-list-link spot-list-link-forecast padding-sm nopadd
 
 
 def get_spot_beaches_urls(url):
+    """
+    Extract the urls of every spot from the area's url.
+    :param url: area url
+    :return: list of every beach spot in the area.
+    """
     beaches_urls = []
 
     # this returns the path web driver downloaded
