@@ -5,7 +5,7 @@ FAKE_USER_HEADER = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_
                                   '(KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
 RESPONSE_CODE_SUCCESS = 200
-BATCH_SIZE = 5
+BATCH_SIZE = 10
 
 
 def list_urls_to_list_responses(urls):
