@@ -5,7 +5,7 @@ FAKE_USER_HEADER = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_
                                   '(KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
 RESPONSE_CODE_SUCCESS = 200
-BATCH_SIZE = 10
+BATCH_SIZE = 5
 
 
 def list_urls_to_list_responses(urls):
@@ -26,8 +26,8 @@ def list_urls_to_list_responses(urls):
         if response.status_code != RESPONSE_CODE_SUCCESS:
             raise ConnectionError(f'Failed requesting url: {urls}')
         else:
-            request_soup.append(BeautifulSoup(response.content, "html.parser"))
-        return request_soup
+            request_soup += [BeautifulSoup(response.content, "html.parser")]
+    return request_soup
 
     # responses_list = grequests.map(request_list, size=BATCH_SIZE)
     # for response in responses_list:
