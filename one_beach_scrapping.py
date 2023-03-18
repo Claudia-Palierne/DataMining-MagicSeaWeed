@@ -48,10 +48,10 @@ def extract_wind_direction(beach_soup):
     return direction
 
 
-def print_beach_info():
-    get_page = requests.get("https://magicseaweed.com/Hilton-Surf-Report/3658/Historic/",
-                            headers={"User-agent": "Mozilla/5.0"})
-    beach_soup = BeautifulSoup(get_page.text, "html.parser")
+def print_beach_info(beach_soup):
+    # get_page = requests.get("https://magicseaweed.com/Hilton-Surf-Report/3658/Historic/",
+    #                         headers={"User-agent": "Mozilla/5.0"})
+    # beach_soup = BeautifulSoup(get_page.text, "html.parser")
     days = extract_days(beach_soup)
     hours = extract_hours(beach_soup)
     weathers = extract_weather(beach_soup)
@@ -65,7 +65,6 @@ def print_beach_info():
         print(day)
         print("| Time | Weather  | Temperature | Swell | Steady Wind Speed (KpH) | Gust Wind Speed (KpH) | Wind Direction | Surfability [0-5]")
         for j, hour in enumerate(hours):
-            print(hour, weathers[i*7+j], temperature[i*7+j], swell[i*7+j], steady_wind[i*7+j], gust_wind[i*7+j], direction_wind[i*7+j], surfability[i*7+j])
+            print(hour, weathers[i*7+j], temperature[i*7+j], swell[i*7+j], steady_wind[i*7+j], gust_wind[i*7+j])#, direction_wind[i*7+j], surfability[i*7+j])
 
 
-print_beach_info()
