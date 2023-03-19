@@ -4,11 +4,10 @@ from bs4 import BeautifulSoup
 import one_beach_scrapping
 import selenium_scrapping
 import bs4_scrapping
+import json
 
-HOST = "https://magicseaweed.com"
-WEBSITE_SURF_FORECAST = "https://magicseaweed.com/Israel-Surf-Forecast/90/"
-FAKE_USER_HEADER = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 '
-                                  '(KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+with open("conf.json", "r") as jsonfile:
+    CONFIG = json.load(jsonfile)
 
 
 def extract_urls():
@@ -17,9 +16,9 @@ def extract_urls():
     :return: list of urls
     """
     # Extract areas' urls
-    surf_forecast_request = requests.get(WEBSITE_SURF_FORECAST, headers=FAKE_USER_HEADER)
+    surf_forecast_request = requests.get(CONFIG['WEBSITE_SURF_FORECAST'], headers=CONFIG['FAKE_USER_HEADER'])
     surf_forecast_soup = BeautifulSoup(surf_forecast_request.content, "html.parser")
-    area_urls = [HOST + area_link.attrs['href'] for area_link in surf_forecast_soup.find_all('a', class_="list-group-item h6 nomargin-top")]
+    area_urls = [CONFIG['HOST'] + area_link.attrs['href'] for area_link in surf_forecast_soup.find_all('a', class_="list-group-item h6 nomargin-top")]
     # Extract beaches' urls from all areas
     all_beaches_urls = []
     for url in area_urls:

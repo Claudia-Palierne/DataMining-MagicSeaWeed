@@ -2,11 +2,10 @@ from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
+import json
 
-TAG_NAME = 'a'
-CLASS_NAME = r'clearfix spot-list-link spot-list-link-forecast padding-sm nopadding-left nopadding-right'
-URL = "https://magicseaweed.com/Central-Tel-Aviv-Surfing/113/"
-ARCHIVE = "Historic/"
+with open("conf.json", "r") as jsonfile:
+    CONFIG = json.load(jsonfile)
 
 def get_spot_beaches_urls(url):
     """
@@ -29,18 +28,18 @@ def get_spot_beaches_urls(url):
     with webdriver.Chrome(options=options, service=chrome_service) as driver:
         # navigate to the url
         driver.get(url)
-        driver.implicitly_wait(5)
+        driver.implicitly_wait(CONFIG['WAIT_TIME_SECOND'])
 
         # find elements by tag name 'a' and class =
-        elements = driver.find_elements(By.CSS_SELECTOR, f"{TAG_NAME}[class='{CLASS_NAME}']")
+        elements = driver.find_elements(By.CSS_SELECTOR, f"a[class='clearfix spot-list-link spot-list-link-forecast padding-sm nopadding-left nopadding-right']")
 
         # fills the beaches_urls list to return
         for element in elements:
-            beaches_urls.append(element.get_attribute('href') + ARCHIVE)
+            beaches_urls.append(element.get_attribute('href') + CONFIG['ARCHIVE'])
 
         return beaches_urls
 
 
 if __name__ == "__main__":
-    beaches = get_spot_beaches_urls(URL)
+    beaches = get_spot_beaches_urls("https://magicseaweed.com/Central-Tel-Aviv-Surfing/113/")
     print(beaches)

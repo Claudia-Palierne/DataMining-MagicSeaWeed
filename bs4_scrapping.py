@@ -1,10 +1,11 @@
 import grequests
 from bs4 import BeautifulSoup
+import json
 
-FAKE_USER_HEADER = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 '
-                                  '(KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 RESPONSE_CODE_SUCCESS = 200
-BATCH_SIZE = 10
+
+with open("conf.json", "r") as jsonfile:
+    CONFIG = json.load(jsonfile)
 
 
 def list_urls_to_list_responses(urls):
@@ -19,9 +20,9 @@ def list_urls_to_list_responses(urls):
     if not isinstance(urls, list):
         urls = [urls]
 
-    request_list = (grequests.get(url, headers=FAKE_USER_HEADER) for url in urls)
+    request_list = (grequests.get(url, headers=CONFIG['FAKE_USER_HEADER']) for url in urls)
     request_soup = []
-    for response in grequests.imap(request_list, size=BATCH_SIZE):
+    for response in grequests.imap(request_list, size=CONFIG['BATCH_SIZE']):
         if response.status_code != RESPONSE_CODE_SUCCESS:
             raise ConnectionError(f'Failed requesting url: {urls}')
         else:
