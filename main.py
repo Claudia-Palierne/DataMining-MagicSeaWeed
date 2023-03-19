@@ -3,7 +3,6 @@ import requests
 from bs4 import BeautifulSoup
 import one_beach_scrapping
 import selenium_scrapping
-import bs4_scrapping
 import json
 
 with open("conf.json", "r") as jsonfile:
@@ -27,12 +26,30 @@ def extract_urls():
     return all_beaches_urls
 
 
+def get_soup(urls):
+    """
+    Given a list of URLs or a single URL, send GET requests to each URL using grequests and return the responses.
+
+    :param urls: A single string or a list of strings representing the URLs to fetch
+    :return: A single grequests.Response objects or a list of grequests.Response objects
+            representing the responses for each URL
+    """
+    request_list = (grequests.get(url, headers=CONFIG['FAKE_USER_HEADER']) for url in urls)
+    request_soup = []
+    for response in grequests.imap(request_list, size=CONFIG['BATCH_SIZE']):
+        if response.status_code != CONFIG['RESPONSE_CODE_SUCCESS']:
+            raise ConnectionError(f'Failed requesting url: {urls}')
+        else:
+            request_soup += [BeautifulSoup(response.content, "html.parser")]
+    return request_soup
+
+
 def main():
     """
     Web scrapping of the site MagicSeaWeed.
     """
     beaches_url = extract_urls()
-    beaches_soup = bs4_scrapping.list_urls_to_list_responses(beaches_url)
+    beaches_soup = get_soup(beaches_url)
     for bs in beaches_soup:
         one_beach_scrapping.print_beach_info(bs)
 

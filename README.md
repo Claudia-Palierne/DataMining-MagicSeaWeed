@@ -13,8 +13,6 @@ It offers up-to-date data on wave height, swell direction, wind speed, tide time
 The data is not publicly available via an API.
 
 ## Requirements
-[List all the requirements and dependencies needed to run the code. Include a requirements.txt file with all the necessary packages and versions.]
-
 `pip install requirements.txt`
 
 `pip install selenium`
@@ -22,14 +20,14 @@ The data is not publicly available via an API.
 `pip install webdriver-manager`
 
 ## How to Run
-Install the required packages using pip install -r requirements.txt.
-Run the main Python script using python main.py.
-The script will collect data from Magicseeweed.com and print the results in the **standard output/logfile**
+* Install the required packages using pip install -r requirements.txt. 
+* Run the main Python script using python main.py. 
+* The script will collect data from Magicseeweed.com and print the results in the standard ouput
 
 ## Project Structure
-main.py: The main script that initiates the web scraping process.
-bs4_scrapping.py: Contains the functions for web scraping using requests and BeautifulSoup.
-selenium_scrapping.py: Contains the functions for web scraping using Selenium.
+* main.py: The main script that initiates the web scraping process. 
+* one_beach_scrapping.py: Contains the functions for retrieving the data of interest (detailed below) given a certain beach url. 
+* selenium_scrapping.py: Contains the functions for getting all beaches urls using Selenium.
 
 ## Contributors
 Claudia Palierne
@@ -42,7 +40,7 @@ The code can be run from command line or from any IDE like PyCharm.
 ## Results
 [Include a summary of the data that was scraped, including any interesting patterns or insights that were discovered.]
 Milestone 1 : For every beach on the coast of Israel and for every 3 hours every day of the week past the execution, the code prints the following information:
-* weather ()
+* weather
 * temperature (in Celsius)
 * swell (wave quality indicator)
 * rating (wave quality indicator)
@@ -56,6 +54,7 @@ Given the past and current weather data, outputs the best spot in the country to
 ## References
 * Selenium :
 [medium.com](https://medium.com/pythoneers/web-scraping-using-selenium-python-6c511258ab50#:~:text=It%20is%20the%20process%20of,can%20scrape%20dynamic%20web%20easily)
+[zenrows](https://www.zenrows.com/blog/scraping-javascript-rendered-web-pages#the-disadvantage-of-using-selenium)
 
 * BeautifulSoup and HTML:
 [realpython.com](https://realpython.com/beautiful-soup-web-scraper-python/)
