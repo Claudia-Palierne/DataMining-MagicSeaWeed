@@ -31,7 +31,7 @@ def extract_temperature(beach_soup):
 
 def extract_swell(beach_soup):
     """Extract swell height of the past week."""
-    swell = [a.text for a in beach_soup.find_all("span", class_="h3 font-sans-serif heavy nomargin text-white")]
+    swell = [a.text for a in beach_soup.select('span[class*="font-sans-serif"]')]
     return swell
 
 
@@ -93,7 +93,7 @@ def print_beach_info(beach_soup):
 
 
 if __name__ == "__main__":
-    get_page = requests.get("https://magicseaweed.com/Argamans-Beach-Surf-Report/4932/Historic/",
+    get_page = requests.get("https://magicseaweed.com/Sokolov-Beach-Surf-Report/4640/Historic/",
                             headers={"User_agent": "Mozilla/5.0"})
     beach_soup = BeautifulSoup(get_page.text, "html.parser")
     print_beach_info(beach_soup)
