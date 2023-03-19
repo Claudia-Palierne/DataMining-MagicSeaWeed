@@ -7,7 +7,6 @@ import bs4_scrapping
 
 HOST = "https://magicseaweed.com"
 WEBSITE_SURF_FORECAST = "https://magicseaweed.com/Israel-Surf-Forecast/90/"
-HISTORIC = "Historic/"
 FAKE_USER_HEADER = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 '
                                   '(KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
@@ -25,6 +24,7 @@ def extract_urls():
     all_beaches_urls = []
     for url in area_urls:
         all_beaches_urls += selenium_scrapping.get_spot_beaches_urls(url)
+    print(all_beaches_urls)
     return all_beaches_urls
 
 

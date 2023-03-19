@@ -6,7 +6,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 TAG_NAME = 'a'
 CLASS_NAME = r'clearfix spot-list-link spot-list-link-forecast padding-sm nopadding-left nopadding-right'
 URL = "https://magicseaweed.com/Central-Tel-Aviv-Surfing/113/"
-
+ARCHIVE = "Historic/"
 
 def get_spot_beaches_urls(url):
     """
@@ -36,7 +36,7 @@ def get_spot_beaches_urls(url):
 
         # fills the beaches_urls list to return
         for element in elements:
-            beaches_urls.append(element.get_attribute('href'))
+            beaches_urls.append(element.get_attribute('href') + ARCHIVE)
 
         return beaches_urls
 
