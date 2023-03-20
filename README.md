@@ -20,7 +20,7 @@ The data is not publicly available via an API.
 `pip install webdriver-manager`
 
 ## How to Run
-* Install the required packages using pip install -r requirements.txt. 
+* Install the required packages running the commands above (Requirements). 
 * Run the main Python script using python main.py. 
 * The script will collect data from Magicseeweed.com and print the results in the standard ouput
 
@@ -28,17 +28,16 @@ The data is not publicly available via an API.
 * main.py: The main script that initiates the web scraping process. 
 * one_beach_scrapping.py: Contains the functions for retrieving the data of interest (detailed below) given a certain beach url. 
 * selenium_scrapping.py: Contains the functions for getting all beaches urls using Selenium.
+* conf.json : the configuration file read by all the .py
 
 ## Contributors
 Claudia Palierne
 Mathias Kammoun
 
 ## Usage
-[Include instructions on how to run the code, including any command-line arguments or configuration settings that need to be set.]
 The code can be run from command line or from any IDE like PyCharm.
 
 ## Results
-[Include a summary of the data that was scraped, including any interesting patterns or insights that were discovered.]
 Milestone 1 : For every beach on the coast of Israel and for every 3 hours every day of the week past the execution, the code prints the following information:
 * weather
 * temperature (in Celsius)

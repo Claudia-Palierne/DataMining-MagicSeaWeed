@@ -1,8 +1,9 @@
 import requests
+import json
 from bs4 import BeautifulSoup
 
-DAYS_IN_WEEK = 7
-
+with open("conf.json", "r") as jsonfile:
+    CONFIG = json.load(jsonfile)
 
 def extract_days(beach_soup):
     """Extract the dates of the past week."""
@@ -84,12 +85,12 @@ def print_beach_info(beach_soup):
         print(day)
         print("Time Weather  | Temperature | Swell | Steady Wind Speed (KpH) | Gust Wind Speed (KpH) |  Surfability [0-5]")
         for j, hour in enumerate(hours):
-            print(hour, weathers[i * DAYS_IN_WEEK + j],
-                  temperature[i*DAYS_IN_WEEK+j],
-                  swell[i * DAYS_IN_WEEK + j],
-                  steady_wind[i * DAYS_IN_WEEK + j],
-                  gust_wind[i * DAYS_IN_WEEK + j],
-                  surfability[i * DAYS_IN_WEEK + j])
+            print(hour, weathers[i * CONFIG['DAYS_IN_WEEK'] + j],
+                  temperature[i*CONFIG['DAYS_IN_WEEK']+j],
+                  swell[i * CONFIG['DAYS_IN_WEEK'] + j],
+                  steady_wind[i * CONFIG['DAYS_IN_WEEK'] + j],
+                  gust_wind[i * CONFIG['DAYS_IN_WEEK'] + j],
+                  surfability[i * CONFIG['DAYS_IN_WEEK'] + j])
 
 
 if __name__ == "__main__":
