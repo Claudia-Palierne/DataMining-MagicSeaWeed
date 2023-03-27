@@ -7,6 +7,7 @@ import json
 with open("conf.json", "r") as jsonfile:
     CONFIG = json.load(jsonfile)
 
+
 def get_spot_beaches_urls(url):
     """
     Extract the urls of every spot from the area's url.
@@ -31,15 +32,11 @@ def get_spot_beaches_urls(url):
         driver.implicitly_wait(CONFIG['WAIT_TIME_SECOND'])
 
         # find elements by tag name 'a' and class =
-        elements = driver.find_elements(By.CSS_SELECTOR, f"a[class='clearfix spot-list-link spot-list-link-forecast padding-sm nopadding-left nopadding-right']")
+        elements = driver.find_elements(By.CSS_SELECTOR, f"a[class='clearfix spot-list-link spot-list-link-forecast "
+                                                         f"padding-sm nopadding-left nopadding-right']")
 
         # fills the beaches_urls list to return
         for element in elements:
             beaches_urls.append(element.get_attribute('href') + CONFIG['ARCHIVE'])
 
         return beaches_urls
-
-
-if __name__ == "__main__":
-    beaches = get_spot_beaches_urls("https://magicseaweed.com/Central-Tel-Aviv-Surfing/113/")
-    print(beaches)

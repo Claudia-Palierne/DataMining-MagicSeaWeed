@@ -5,16 +5,21 @@ from bs4 import BeautifulSoup
 with open("conf.json", "r") as jsonfile:
     CONFIG = json.load(jsonfile)
 
+
 def extract_days(beach_soup):
-    """Extract the dates of the past week."""
+    """
+    Extract the urls of every beach spot in the country.
+    param: beach_soup
+    :return: days
+    """
     days = [a.text for a in beach_soup.find_all("h6", class_="nomargin pull-left heavy table-header-title")]
     return days
 
 
 def extract_hours(beach_soup):
     """Extract the time of the measurements."""
-    hours = [a. text for a in beach_soup.find_all("td",
-                                                  class_="nopadding-left row-title background-clear msw-js-tooltip")][:8]
+    hours = [a.text for a in beach_soup.find_all("td",
+                                                 class_="nopadding-left row-title background-clear msw-js-tooltip")][:8]
     return hours
 
 
@@ -83,18 +88,12 @@ def print_beach_info(beach_soup):
     print(f"--------------- {name} ------------------")
     for i, day in enumerate(days):
         print(day)
-        print("Time Weather  | Temperature | Swell | Steady Wind Speed (KpH) | Gust Wind Speed (KpH) |  Surfability [0-5]")
+        print("Time Weather  | Temperature | Swell | Steady Wind Speed (KpH) | Gust Wind Speed (KpH) |  Surfability ["
+              "0-5]")
         for j, hour in enumerate(hours):
             print(hour, weathers[i * CONFIG['DAYS_IN_WEEK'] + j],
-                  temperature[i*CONFIG['DAYS_IN_WEEK']+j],
+                  temperature[i * CONFIG['DAYS_IN_WEEK'] + j],
                   swell[i * CONFIG['DAYS_IN_WEEK'] + j],
                   steady_wind[i * CONFIG['DAYS_IN_WEEK'] + j],
                   gust_wind[i * CONFIG['DAYS_IN_WEEK'] + j],
                   surfability[i * CONFIG['DAYS_IN_WEEK'] + j])
-
-
-if __name__ == "__main__":
-    get_page = requests.get("https://magicseaweed.com/Sokolov-Beach-Surf-Report/4640/Historic/",
-                            headers={"User_agent": "Mozilla/5.0"})
-    beach_soup = BeautifulSoup(get_page.text, "html.parser")
-    print_beach_info(beach_soup)

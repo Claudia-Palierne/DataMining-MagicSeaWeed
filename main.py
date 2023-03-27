@@ -17,7 +17,8 @@ def extract_urls():
     # Extract areas' urls
     surf_forecast_request = requests.get(CONFIG['WEBSITE_SURF_FORECAST'], headers=CONFIG['FAKE_USER_HEADER'])
     surf_forecast_soup = BeautifulSoup(surf_forecast_request.content, "html.parser")
-    area_urls = [CONFIG['HOST'] + area_link.attrs['href'] for area_link in surf_forecast_soup.find_all('a', class_="list-group-item h6 nomargin-top")]
+    area_urls = [CONFIG['HOST'] + area_link.attrs['href']
+                 for area_link in surf_forecast_soup.find_all('a', class_="list-group-item h6 nomargin-top")]
     # Extract beaches' urls from all areas
     all_beaches_urls = []
     for url in area_urls:
@@ -56,4 +57,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
