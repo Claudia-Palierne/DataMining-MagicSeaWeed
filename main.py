@@ -12,7 +12,7 @@ with open("conf.json", "r") as jsonfile:
 def extract_urls():
     """
     Extract the urls of every beach spot in the country.
-    :return: list of urls
+    :return: list of urls string
     """
     # Extract areas' urls
     surf_forecast_request = requests.get(CONFIG['WEBSITE_SURF_FORECAST'], headers=CONFIG['FAKE_USER_HEADER'])
@@ -29,11 +29,9 @@ def extract_urls():
 
 def get_soup(urls):
     """
-    Given a list of URLs or a single URL, send GET requests to each URL using grequests and return the responses.
-
-    :param urls: A single string or a list of strings representing the URLs to fetch
-    :return: A single grequests.Response objects or a list of grequests.Response objects
-            representing the responses for each URL
+    Given a list of URLs, send GET requests to each URL using grequests and return beautifulSoup objects.
+    :param urls: list of strings representing the URLs.
+    :return: a list of BeautifulSoup object for each url.
     """
     request_list = (grequests.get(url, headers=CONFIG['FAKE_USER_HEADER']) for url in urls)
     request_soup = []
@@ -48,6 +46,7 @@ def get_soup(urls):
 def main():
     """
     Web scrapping of the site MagicSeaWeed.
+    :return: None
     """
     beaches_url = extract_urls()
     beaches_soup = get_soup(beaches_url)

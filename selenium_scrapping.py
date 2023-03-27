@@ -11,7 +11,7 @@ with open("conf.json", "r") as jsonfile:
 def get_spot_beaches_urls(url):
     """
     Extract the urls of every spot from the area's url.
-    :param url: area url
+    :param url: a string of the area's url
     :return: list of every beach spot in the area.
     """
     beaches_urls = []
