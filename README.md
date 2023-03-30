@@ -12,7 +12,7 @@ It offers up-to-date data on wave height, swell direction, wind speed, tide time
 
 The data is not publicly available via an API.
 
-## Requirements
+## Requirement
 `pip install requirements.txt`
 
 `pip install selenium`
