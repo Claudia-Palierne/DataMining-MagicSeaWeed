@@ -49,11 +49,13 @@ def main():
     :return: None
     """
     beaches_url = extract_urls()
+    print(len(beaches_url))
     beaches_soup = get_soup(beaches_url)
+    print(len(beaches_soup))
     for bs in beaches_soup:
         one_beach_scrapping.print_beach_info(bs)
 
 
 if __name__ == "__main__":
+
     main()
-    a = 6
