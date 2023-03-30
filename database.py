@@ -1,5 +1,10 @@
+import one_beach_scrapping
+import json
 import mysql.connector
 from mysql.connector import errorcode
+
+with open("conf.json", "r") as jsonfile:
+    CONFIG = json.load(jsonfile)
 
 DB_NAME = "MagicSeaWeed"
 TABLES = {}
@@ -64,6 +69,9 @@ cursor = connection.cursor()
 
 
 def create_database(cursor):
+    """
+
+    """
     try:
         cursor.execute(f"CREATE DATABASE {DB_NAME} DEFAULT CHARACTER SET 'utf8'")
     except mysql.connector.Error as error:
@@ -100,3 +108,20 @@ cursor.close()
 connection.close()
 
 
+def insert_conditions(beach_soup):
+    """
+
+    """
+    cnx = mysql.connector.connect(user='scott', database='employees')
+    cursor = cnx.cursor()
+    beach_info = one_beach_scrapping.beach_historic(beach_soup)
+    for i in range():
+        for j in range():
+            cursor.execute(f"""INSERT INTO Conditions 
+            VALUES (DEFAULT, {len(beach_info['name'])}, {beach_info['timestamp'][i * CONFIG['DAYS_IN_WEEK'] + j]}, {beach_info['weather'][i * CONFIG['DAYS_IN_WEEK'] + j]},
+            {beach_info['swell'][i * CONFIG['DAYS_IN_WEEK'] + j][0]}, {beach_info['swell'][i * CONFIG['DAYS_IN_WEEK'] + j][1]}, {beach_info['temperature'][i * CONFIG['DAYS_IN_WEEK'] + j]}, 
+            {beach_info['steady_wind_speed'][i * CONFIG['DAYS_IN_WEEK'] + j]}, {beach_info['gust_wind_speed'][i * CONFIG['DAYS_IN_WEEK'] + j]}, {beach_info['direction'][i * CONFIG['DAYS_IN_WEEK'] + j]})
+            """)
+    cnx.commit()
+    cursor.close()
+    cnx.close()
