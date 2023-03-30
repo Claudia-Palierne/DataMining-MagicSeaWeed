@@ -44,12 +44,12 @@ TABLES['Conditions'] = (
     `beach_id` int(11) NOT NULL,
     `timestamp` date NOT NULL,
     `weather_id` int(11) NOT NULL,
-    `wave_height_min` int(11) NOT NULL,
-    `wave_height_max` int(11) NOT NULL,
-    `temperature` int(11) NOT NULL,
-    `steady_wind_speed` int(11) NOT NULL,
-    `gust_wind_speed` int(11) NOT NULL,
-    `wind_direction` int(11) NOT NULL,
+    `wave_height_min(m)` int(11) NOT NULL,
+    `wave_height_max(m)` int(11) NOT NULL,
+    `temperature(C)` int(11) NOT NULL,
+    `steady_wind_speed(kph)` int(11) NOT NULL,
+    `gust_wind_speed(kph)` int(11) NOT NULL,
+    `wind_direction(degree)` int(11) NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (beach_id) REFERENCES Beaches(id),
     FOREIGN KEY (weather_id) REFERENCES Weathers(id)
@@ -98,3 +98,5 @@ for table_name in TABLES:
 
 cursor.close()
 connection.close()
+
+
