@@ -53,13 +53,21 @@ def main():
 
     parser = argparse.ArgumentParser()
     # Gets the country input by user
-    parser.add_argument("-country", type=str, choices=['ISRAEL', 'FRANCE', 'HAWAII'],
-                        default='ALL',
+    parser.add_argument("-country", type=str, choices=['ALL', 'ISRAEL', 'FRANCE', 'HAWAII'],
+                        default='ISRAEL',
                         help="choose a country from the list to scrap")
+
+    # Get the execution mode
+    parser.add_argument("-mode", type=str, choices=['print', 'database'],
+                        default='print',
+                        help="choose a mode of execution :"
+                             "print will print the information in the std output"
+                             "whereas database will store it in the db")
 
     # Using parser to further use the arguments
     args = parser.parse_args()
     country_to_scrap = args.country
+    execution_mode = args.mode
 
     beaches_url = []
     if country_to_scrap == 'ALL':
@@ -70,9 +78,13 @@ def main():
         country_forecast_urls = CONFIG["SURF_FORECAST"].get(country_to_scrap)
         beaches_url = extract_urls(country_forecast_urls)
 
-    beaches_soup = get_soup(beaches_url)
-    for bs in beaches_soup:
-        one_beach_scrapping.print_beach_info(bs)
+    if execution_mode == 'print':
+        # Previous code :
+        beaches_soup = get_soup(beaches_url)
+        for bs in beaches_soup:
+            one_beach_scrapping.print_beach_info(bs)
+    else:
+        print('Fill database')
 
 
 if __name__ == "__main__":
