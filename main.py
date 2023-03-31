@@ -53,15 +53,15 @@ def main():
 
     parser = argparse.ArgumentParser()
     # Gets the country input by user
-    parser.add_argument("-country", type=str, choices=['ISRAEL', 'FRANCE', 'HAWAII'],
-                        default='ALL',
+    parser.add_argument("-country", type=str, choices=['ALL', 'ISRAEL', 'FRANCE', 'HAWAII'],
+                        default='ISRAEL',
                         help="choose a country from the list to scrap")
 
     # Get the execution mode
     parser.add_argument("-mode", type=str, choices=['print', 'database'],
                         default='print',
                         help="choose a mode of execution :"
-                             "print will print the information in the command line"
+                             "print will print the information in the std output"
                              "whereas database will store it in the db")
 
     # Using parser to further use the arguments
