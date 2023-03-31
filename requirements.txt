@@ -8,3 +8,4 @@ urllib3==1.26.15
 
 grequests~=0.6.0
 selenium~=4.8.2
+mysql-connector-python~=8.0.32

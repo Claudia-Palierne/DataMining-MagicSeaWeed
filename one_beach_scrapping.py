@@ -44,8 +44,16 @@ def extract_swell(beach_soup):
     :param beach_soup: BeautifulSoup object
     :return: an array of the swell height for each day and each hour.
     """
-    swell = [list(map(float, re.findall(r"\d+\.\d+", a.text))) if a.text != " Flat " else [0, 0]
-             for a in beach_soup.select('span[class*="font-sans-serif"]')]
+    swell = []
+    for a in beach_soup.select('span[class*="font-sans-serif"]'):
+        if a.text.strip() == "Flat":
+            swell.append([0.0, 0.0])
+        else:
+            tmp = list(map(float, re.findall(r"\d+\.\d+", a.text)))
+            if len(tmp) < 2:
+                swell.append(tmp + tmp)
+            else :
+                swell.append(tmp)
     return swell
 
 
@@ -87,8 +95,7 @@ def extract_wind_direction(beach_soup):
     :param beach_soup: BeautifulSoup Object
     :return: an array with the wind direction for each day and each hour.
     """
-    direction = [a for a in beach_soup.find_all("td",
-                                                class_="text-center last msw-js-tooltip td-square background-warning")]
+    direction = [a['title'].split(", ")[1] for a in beach_soup.select('td[class*="text-center last msw-js-tooltip td-square background"]')]
     return direction
 
 
@@ -98,7 +105,7 @@ def extract_name(beach_soup):
     :param beach_soup: BeautifulSoup Object
     :return: a string of the name of the surf spot.
     """
-    return beach_soup.find("h1").text.split("Historic")[0]
+    return beach_soup.find("h1").text.split("Historic")[0].strip()
 
 
 def beach_historic(beach_soup):
@@ -138,4 +145,5 @@ def print_beach_info(beach_soup):
               beach_info['swell'][i],
               beach_info['steady_wind_speed'][i],
               beach_info['gust_wind_speed'][i],
-              beach_info['surfability'][i])
+              beach_info['surfability'][i],
+              beach_info['direction'][i])
