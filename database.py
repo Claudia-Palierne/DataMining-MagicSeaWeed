@@ -66,52 +66,60 @@ TABLES['Conditions'] = (
 # FOREIGN KEY (beach_id) REFERENCES Beaches(id),
 # FOREIGN KEY (weather_id) REFERENCES Weathers(id)
 
-connection = mysql.connector.connect(
-    host='localhost',
-    user='root',
-    password='root1234')
 
-cursor = connection.cursor()
-
-
-def create_database(cursor):
+def create_database():
     """
 
     """
+    connection = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='root1234')
+    cursor = connection.cursor()
+    # Create database and tables
     try:
         cursor.execute(f"CREATE DATABASE {DB_NAME} DEFAULT CHARACTER SET 'utf8'")
     except mysql.connector.Error as error:
         print(f"Failed creating database: {error}")
         exit(1)
+    finally:
+        cursor.close()
+        connection.close()
 
 
-try:
-    cursor.execute("USE {}".format(DB_NAME))
-except mysql.connector.Error as error:
-    print(f"Database {DB_NAME} does not exists.")
-    if error.errno == errorcode.ER_BAD_DB_ERROR:
-        create_database(cursor)
-        print(f"Database {DB_NAME} created successfully.")
-        connection.database = DB_NAME
-    else:
-        print(error)
-        exit(1)
+def create_table():
+    connection = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='root1234')
 
-for table_name in TABLES:
-    table_description = TABLES[table_name]
+    cursor = connection.cursor()
     try:
-        print("Creating table {}: ".format(table_name), end='')
-        cursor.execute(table_description)
-    except mysql.connector.Error as err:
-        if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
-            print("already exists.")
+        cursor.execute("USE {}".format(DB_NAME))
+    except mysql.connector.Error as error:
+        print(f"Database {DB_NAME} does not exists.")
+        if error.errno == errorcode.ER_BAD_DB_ERROR:
+            create_database(cursor)
+            print(f"Database {DB_NAME} created successfully.")
+            connection.database = DB_NAME
         else:
-            print(err.msg)
-    else:
-        print("OK")
+            print(error)
+            exit(1)
+    for table_name in TABLES:
+        table_description = TABLES[table_name]
+        try:
+            print("Creating table {}: ".format(table_name), end='')
+            cursor.execute(table_description)
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
+                print("already exists.")
+            else:
+                print(err.msg)
+        else:
+            print("OK")
+    cursor.close()
+    connection.close()
 
-cursor.close()
-connection.close()
 
 
 def insert_countries():
@@ -208,5 +216,4 @@ insert_conditions(get_soup)
 
 # TODO : ajouter excetions - si la table exist pas, si la row a deja ete ajoutee
 # TODO : changer les datatype de certaines valeurs
-# TODO : creer fonctions pr les autres tables.
 # TODO : nettoyer le code.
