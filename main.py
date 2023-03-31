@@ -11,7 +11,7 @@ with open("conf.json", "r") as jsonfile:
     CONFIG = json.load(jsonfile)
 
 
-def extract_urls(country_forecast_urls):
+def extract_areas_urls(country_forecast_urls):
     """
     Extract the urls of every beach spot in the country.
     :return: list of urls string
@@ -21,6 +21,10 @@ def extract_urls(country_forecast_urls):
     surf_forecast_soup = BeautifulSoup(surf_forecast_request.content, "html.parser")
     area_urls = [CONFIG['HOST'] + area_link.attrs['href']
                  for area_link in surf_forecast_soup.find_all('a', class_="list-group-item h6 nomargin-top")]
+    return area_urls
+
+
+def extract_beaches_urls(area_urls):
     # Extract beaches' urls from all areas
     all_beaches_urls = []
     for url in area_urls:
@@ -73,10 +77,12 @@ def main():
     if country_to_scrap == 'ALL':
         for country in ['ISRAEL', 'FRANCE', 'HAWAII']:
             country_forecast_urls = CONFIG["SURF_FORECAST"].get(country)
-            beaches_url += extract_urls(country_forecast_urls)
+            areas_urls = extract_areas_urls(country_forecast_urls)
+            beaches_url += extract_beaches_urls(areas_urls)
     else:
         country_forecast_urls = CONFIG["SURF_FORECAST"].get(country_to_scrap)
-        beaches_url = extract_urls(country_forecast_urls)
+        areas_urls = extract_areas_urls(country_forecast_urls)
+        beaches_url = extract_beaches_urls(areas_urls)
 
     if execution_mode == 'print':
         # Previous code :
@@ -88,5 +94,4 @@ def main():
 
 
 if __name__ == "__main__":
-
     main()
