@@ -1,3 +1,5 @@
+import re
+
 import one_beach_scrapping
 from datetime import datetime
 import json
@@ -112,6 +114,68 @@ cursor.close()
 connection.close()
 
 
+def insert_countries():
+    """
+
+    """
+    cnx = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='root1234',
+        database=DB_NAME)
+    cursor = cnx.cursor()
+    add_country = """INSERT INTO Conditions (`name`, `url`) 
+                    VALUES (%s, %s);"""
+    for name, url in CONFIG["SURF_FORECAST"]:
+        country = (name, url)
+        cursor.execute(add_country, country)
+    cnx.commit()
+    cursor.close()
+    cnx.close()
+
+
+def insert_areas(areas_links, country):
+    """
+
+    """
+    cnx = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='root1234',
+        database=DB_NAME)
+    cursor = cnx.cursor()
+    add_area = f"""INSERT INTO Conditions (`name`, `url`, `country_id`) 
+                    VALUES (%s, %s, (SELECT id FROM Countries where Countries.name == {country});"""
+    for url in areas_links:
+        name = re.search(r"(\w*)-Surfing", url).group()
+        area = (name, url)
+        cursor.execute(add_area, area)
+    cnx.commit()
+    cursor.close()
+    cnx.close()
+
+
+def insert_beaches(beaches_url, area):
+    """
+
+    """
+    cnx = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='root1234',
+        database=DB_NAME)
+    cursor = cnx.cursor()
+    add_beach = f"""INSERT INTO Conditions (`name`, `url`, `area_id`) 
+                        VALUES (%s, %s, (SELECT id FROM Areas where Areas.name == {area});"""
+    for url in beaches_url:
+        name = re.search(r"(\w*)-Surf", url).group()
+        beach = (name, url)
+        cursor.execute(add_beach, beach)
+    cnx.commit()
+    cursor.close()
+    cnx.close()
+
+
 def insert_conditions(beach_soup):
     """
 
@@ -131,7 +195,6 @@ def insert_conditions(beach_soup):
                      beach_info['weather'][i], beach_info['swell'][i][0], beach_info['swell'][i][1],
                      beach_info['temperature'][i], beach_info['steady_wind_speed'][i], beach_info['gust_wind_speed'][i],
                      beach_info['surfability'][i], beach_info['direction'][i])
-        print(condition)
         cursor.execute(add_condition, condition)
     cnx.commit()
     cursor.close()
@@ -143,4 +206,7 @@ get_url = requests.get("https://magicseaweed.com/Beit-Yanai-Surf-Report/3783/His
 get_soup = BeautifulSoup(get_url.content, "html.parser")
 insert_conditions(get_soup)
 
-#('Beit Yanai', datetime.datetime(2023, 3, 30, 12, 0), 'Light Showers', 1.4, 2.2, 15, 31, 31, 0, 'Onshore WNW - 292°')
+# TODO : ajouter excetions - si la table exist pas, si la row a deja ete ajoutee
+# TODO : changer les datatype de certaines valeurs
+# TODO : creer fonctions pr les autres tables.
+# TODO : nettoyer le code.
