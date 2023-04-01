@@ -49,11 +49,18 @@ def extract_swell(beach_soup):
         if a.text.strip() == "Flat":
             swell.append([0.0, 0.0])
         else:
-            tmp = list(map(float, re.findall(r"\d+\.\d+", a.text)))
-            if len(tmp) < 2:
-                swell.append(tmp + tmp)
-            else :
-                swell.append(tmp)
+            tmp = re.findall(r"(\d+(\.\d+)?)-?(\d+(\.\d+)?)?m", a.text)
+            min_swell = float(tmp[0])
+            max_swell = float(tmp[2]) if tmp[2] else None
+            if max_swell is not None:
+                swell.append([min_swell, max_swell])
+            else:
+                swell.append([min_swell, min_swell])
+            #values.append(int_value)
+            #if len(tmp) < 2:
+                #swell.append(tmp + tmp)
+            #else:
+                #swell.append(tmp)
     return swell
 
 
@@ -105,7 +112,9 @@ def extract_name(beach_soup):
     :param beach_soup: BeautifulSoup Object
     :return: a string of the name of the surf spot.
     """
-    return beach_soup.find("h1").text.split("Historic")[0].strip()
+    name = re.search(r"/([^/]+?)-Surf", beach_soup.find("link")['href']).group()[1:]
+    print('extract name : ', name)
+    return name
 
 
 def beach_historic(beach_soup):
@@ -127,13 +136,13 @@ def beach_historic(beach_soup):
     return infos
 
 
-def print_beach_info(beach_soup):
+def print_beach_info(beach_info):
     """
     Print all the info that were extracted in the surf spot.
     :param beach_soup: BeautifulSoup Object
     :return: None
     """
-    beach_info = beach_historic(beach_soup)
+    # beach_info = beach_historic(beach_soup)
     print(f"--------------- {beach_info['name']} ------------------")
     for i, time in enumerate(beach_info['timestamp']):
         if i % 8 == 0:

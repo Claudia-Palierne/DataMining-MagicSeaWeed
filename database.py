@@ -1,4 +1,5 @@
 import re
+import grequests
 import one_beach_scrapping
 import json
 import requests
@@ -32,8 +33,8 @@ TABLES['Areas'] = (
 TABLES['Beaches'] = (
     """CREATE TABLE `Beaches` ( 
     `id` int(11) NOT NULL AUTO_INCREMENT,
-    `name` varchar(14) NOT NULL,
-    `url` varchar(14) NOT NULL,
+    `name` varchar(255) NOT NULL,
+    `url` varchar(255) NOT NULL,
     `area_id` int(11) NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (area_id) REFERENCES Areas(id)
@@ -42,16 +43,16 @@ TABLES['Beaches'] = (
 TABLES['Weathers'] = (
     """CREATE TABLE `Weathers` ( 
     `id` int(11) NOT NULL AUTO_INCREMENT,
-    `name` varchar(14) NOT NULL,
+    `name` varchar(255) NOT NULL,
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB""")
 
 TABLES['Conditions'] = (
     """CREATE TABLE `Conditions` ( 
     `id` int(11) NOT NULL AUTO_INCREMENT,
-    `beach_id` varchar(255) NOT NULL,
+    `beach_id` int(11) NOT NULL,
     `timestamp` datetime NOT NULL,
-    `weather_id` varchar(255) NOT NULL,
+    `weather` varchar(255) NOT NULL,
     `wave_height_min(m)` float(24) NOT NULL,
     `wave_height_max(m)` float(24) NOT NULL,
     `temperature(C)` int(11) NOT NULL,
@@ -59,9 +60,10 @@ TABLES['Conditions'] = (
     `gust_wind_speed(kph)` int(11) NOT NULL,
     `surfability` int(11) NOT NULL,
     `wind_direction` varchar(255) NOT NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (beach_id) REFERENCES Beaches(id)
     ) ENGINE=InnoDB""")
-# FOREIGN KEY (beach_id) REFERENCES Beaches(id),
+
 # FOREIGN KEY (weather_id) REFERENCES Weathers(id)
 
 
@@ -166,7 +168,7 @@ def insert_areas(areas_links, country):
     cnx.close()
 
 
-def insert_beaches(beaches_url, area):
+def insert_beaches(area_dict):
     """
 
     """
@@ -176,18 +178,25 @@ def insert_beaches(beaches_url, area):
         password='root1995',
         database=DB_NAME)
     cursor = cnx.cursor()
-    add_beach = f"""INSERT INTO Conditions (`name`, `url`, `area_id`) 
-                        VALUES (%s, %s, (SELECT id FROM Areas where Areas.name == {area});"""
-    for url in beaches_url:
-        name = re.search(r"(\w*)-Surf", url).group()
-        beach = (name, url)
-        cursor.execute(add_beach, beach)
+    add_beach = """INSERT INTO Beaches (`name`, `url`, `area_id`) 
+                        SELECT %s, %s, (SELECT id FROM Areas where Areas.name = %s)
+                        WHERE NOT EXISTS (
+                        SELECT * FROM Beaches
+                        WHERE name = %s AND url = %s
+                            AND area_id = (SELECT id FROM Areas where Areas.name = %s));"""
+    for area_name, beach_links in area_dict.items():
+        for beach_url in beach_links:
+
+            beach_name = re.search(r"/([^/]+?)-Surf", beach_url).group()[1:]
+            print(beach_name)
+            beach = (beach_name, beach_url, area_name)
+            cursor.execute(add_beach, beach + beach)
     cnx.commit()
     cursor.close()
     cnx.close()
 
 
-def insert_conditions(beach_soup):
+def insert_conditions(beach_info):
     """
 
     """
@@ -197,16 +206,22 @@ def insert_conditions(beach_soup):
         password='root1995',
         database=DB_NAME)
     cursor = cnx.cursor()
-    beach_info = one_beach_scrapping.beach_historic(beach_soup)
-    add_condition = """INSERT INTO Conditions (`beach_id`, `timestamp`, `weather_id`, `wave_height_min(m)`, `wave_height_max(m)`, 
+    add_condition = """INSERT INTO Conditions (`beach_id`, `timestamp`, `weather`, `wave_height_min(m)`, `wave_height_max(m)`, 
                     `temperature(C)`, `steady_wind_speed(kph)`, `gust_wind_speed(kph)`, `surfability`, `wind_direction`) 
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+                    SELECT (SELECT id FROM Beaches where Beaches.name = %s), %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    WHERE NOT EXISTS (
+                    SELECT * FROM Conditions 
+                    WHERE beach_id = (SELECT id FROM Beaches where Beaches.name = %s) AND timestamp = %s AND weather = %s
+                    AND `wave_height_min(m)` = %s AND `wave_height_max(m)` = %s AND `temperature(C)` = %s AND `steady_wind_speed(kph)` = %s
+                    AND `gust_wind_speed(kph)` = %s AND surfability = %s AND wind_direction = %s
+                    );"""
+
     for i, time in enumerate(beach_info['timestamp']):
         condition = (beach_info['name'], beach_info['timestamp'][i],
                      beach_info['weather'][i], beach_info['swell'][i][0], beach_info['swell'][i][1],
                      beach_info['temperature'][i], beach_info['steady_wind_speed'][i], beach_info['gust_wind_speed'][i],
                      beach_info['surfability'][i], beach_info['direction'][i])
-        cursor.execute(add_condition, condition)
+        cursor.execute(add_condition, condition + condition)
     cnx.commit()
     cursor.close()
     cnx.close()
@@ -217,26 +232,27 @@ def initialize_db():
     insert_countries()
 
 
-def insert_records(areas_links, country):
-    insert_areas()
-
-
 if __name__ == "__main__":
 
     initialize_db()
+
     areas_links_ISRAEL = ['https://magicseaweed.com/Central-Tel-Aviv-Surfing/113/', 'https://magicseaweed.com/Southern-Surfing/1019/', 'https://magicseaweed.com/Haifa-Surfing/1020/', 'https://magicseaweed.com/Red-Sea-Surfing/1074/']
     areas_links_ALL = ['https://magicseaweed.com/Central-Tel-Aviv-Surfing/113/', 'https://magicseaweed.com/Southern-Surfing/1019/', 'https://magicseaweed.com/Haifa-Surfing/1020/', 'https://magicseaweed.com/Red-Sea-Surfing/1074/',
                        'https://magicseaweed.com/The-Channel-Surfing/26/', 'https://magicseaweed.com/Brittany-North-Surfing/27/', 'https://magicseaweed.com/Finistere-South-Surfing/28/', 'https://magicseaweed.com/Morbihan-Loire-Atlantique-Surfing/29/', 'https://magicseaweed.com/Vendee-Surfing/30/', 'https://magicseaweed.com/Charente-Maritime-Surfing/31/', 'https://magicseaweed.com/Gironde-Surfing/32/', 'https://magicseaweed.com/Landes-Surfing/33/', 'https://magicseaweed.com/Hossegor-Surfing/34/', 'https://magicseaweed.com/Biarritz-Anglet-Surfing/35/', 'https://magicseaweed.com/La-Cote-Basque-Surfing/36/', 'https://magicseaweed.com/Mediterranean-France-West-Surfing/39/', 'https://magicseaweed.com/Southern-France-East-Surfing/40/',
                        'https://magicseaweed.com/Big-Island-Surfing/179/', 'https://magicseaweed.com/Kauai-Surfing/177/', 'https://magicseaweed.com/North-West-Maui-Surfing/178/', 'https://magicseaweed.com/Oahu-North-Shore-Surfing/176/', 'https://magicseaweed.com/Oahu-South-Shore-Surfing/366/']
-
     country = "ISRAEL"
-    insert_areas(areas_links_ALL, country)
 
-#TEST
-#get_url = requests.get("https://magicseaweed.com/Beit-Yanai-Surf-Report/3783/Historic/", headers=CONFIG['FAKE_USER_HEADER'])
-#get_soup = BeautifulSoup(get_url.content, "html.parser")
-#insert_conditions(get_soup)
+    insert_areas(areas_links_ISRAEL, country)
 
-# TODO : ajouter excetions - si la table exist pas, si la row a deja ete ajoutee
-# TODO : changer les datatype de certaines valeurs
+
+
+    area_dict = {'Central-Tel-Aviv-Surfing': ['https://magicseaweed.com/Argamans-Beach-Surf-Report/4932/Historic/', 'https://magicseaweed.com/Bat-Yam-Surf-Report/3662/Historic/', 'https://magicseaweed.com/Beit-Yanai-Surf-Report/3783/Historic/', 'https://magicseaweed.com/Dolphinarium-Surf-Report/3660/Historic/', 'https://magicseaweed.com/Dromi-Herzlyia-Marina-Surf-Report/4744/Historic/', 'https://magicseaweed.com/Gazebbo-Beach-Club-Surf-Report/3980/Historic/', 'https://magicseaweed.com/Gordon-Beach-Surf-Report/8019/Historic/', 'https://magicseaweed.com/Ha-Rama-Beach-Surf-Report/5538/Historic/', 'https://magicseaweed.com/Hazuk-Beach-Surf-Report/3659/Historic/', 'https://magicseaweed.com/Hilton-Surf-Report/3658/Historic/', 'https://magicseaweed.com/Hof-Maravi-Surf-Report/3663/Historic/', 'https://magicseaweed.com/Marina-Herzelia-Surf-Report/3979/Historic/', 'https://magicseaweed.com/Netanya-Surf-Report/4558/Historic/', 'https://magicseaweed.com/Palmahim-Surf-Report/3975/Historic/', 'https://magicseaweed.com/Poleg-Beach-Surf-Report/5539/Historic/', 'https://magicseaweed.com/Rishon-Lezion-Surf-Report/3976/Historic/', 'https://magicseaweed.com/Sidna-Ali-Surf-Report/3986/Historic/', 'https://magicseaweed.com/Sironit-Beach-Surf-Report/4933/Historic/', 'https://magicseaweed.com/Tel-Baruch-North-Surf-Report/3978/Historic/', 'https://magicseaweed.com/Topsea-Surf-Report/3661/Historic/', 'https://magicseaweed.com/Zvulun-Herzelia-Surf-Report/3981/Historic/'], 'Southern-Surfing': ['https://magicseaweed.com/Ashdod-Surf-Report/4219/Historic/', 'https://magicseaweed.com/Ashqelon-Surf-Report/3811/Historic/', 'https://magicseaweed.com/Foxes-Point-Surf-Report/7992/Historic/', 'https://magicseaweed.com/Gute-Beach-Surf-Report/4732/Historic/', 'https://magicseaweed.com/Nachal-Yarkon-St-Surf-Report/5540/Historic/', 'https://magicseaweed.com/Zikim-Surf-Report/3977/Historic/'], 'Haifa-Surfing': ['https://magicseaweed.com/Achziv-Beach-Surf-Report/8990/Historic/', 'https://magicseaweed.com/Argaman-Beach-Surf-Report/6794/Historic/', 'https://magicseaweed.com/Atlit-Beach-Surf-Report/6795/Historic/', 'https://magicseaweed.com/Backdoor-Haifa-Surf-Report/3987/Historic/', 'https://magicseaweed.com/Betset-Surf-Report/4738/Historic/', 'https://magicseaweed.com/Caesarea-Surf-Report/3983/Historic/', 'https://magicseaweed.com/Haifa-The-Peak-Surf-Report/3671/Historic/', 'https://magicseaweed.com/Jisr-az-zarqa-Surf-Report/4934/Historic/', 'https://magicseaweed.com/Kadarim-Surf-Report/4866/Historic/', 'https://magicseaweed.com/Kiriat-Yam-Surf-Report/4753/Historic/', 'https://magicseaweed.com/Maagan-Michael-Surf-Report/3984/Historic/', 'https://magicseaweed.com/Nahsholim-Surf-Report/4880/Historic/', 'https://magicseaweed.com/Neve-Yam-Beach-Surf-Report/4935/Historic/', 'https://magicseaweed.com/Nirvana-Beach-Surf-Report/8282/Historic/', 'https://magicseaweed.com/Olga-Beach-Surf-Report/7913/Historic/', 'https://magicseaweed.com/Sdot-Yam-Surf-Report/3982/Historic/', 'https://magicseaweed.com/Shavei-Tzion-Surf-Report/8991/Historic/', 'https://magicseaweed.com/Sokolov-Beach-Surf-Report/4640/Historic/'], 'Red-Sea-Surfing': ['https://magicseaweed.com/Eilat-Surf-Report/8268/Historic/', 'https://magicseaweed.com/Sharm-El-Sheikh-Surf-Report/8274/Historic/']}
+
+    insert_beaches(area_dict)
+
+    beach_response = (grequests.get(url, headers=CONFIG['FAKE_USER_HEADER']) for url in area_dict['Central-Tel-Aviv-Surfing'])
+    cond = [BeautifulSoup(response.text, "html.parser") for response in grequests.imap(beach_response, size=CONFIG['BATCH_SIZE'])]
+    insert_conditions(cond)
+
 # TODO : nettoyer le code.
+#
