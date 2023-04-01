@@ -15,15 +15,15 @@ TABLES['Countries'] = (
     """CREATE TABLE `Countries` ( 
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `name` varchar(14) NOT NULL,
-    `url` varchar(14) NOT NULL,
+    `url` varchar(255) NOT NULL,
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB""")
 
 TABLES['Areas'] = (
     """CREATE TABLE `Areas` ( 
     `id` int(11) NOT NULL AUTO_INCREMENT,
-    `name` varchar(14) NOT NULL,
-    `url` varchar(14) NOT NULL,
+    `name` varchar(255) NOT NULL,
+    `url` varchar(255) NOT NULL,
     `country_id` int(11) NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (country_id) REFERENCES Countries(id)
@@ -72,7 +72,7 @@ def create_database():
     connection = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1234')
+        password='root1995')
     cursor = connection.cursor()
     # Create database and tables
     try:
@@ -88,7 +88,7 @@ def create_table():
     connection = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1234')
+        password='root1995')
 
     cursor = connection.cursor()
     try:
@@ -96,7 +96,7 @@ def create_table():
     except mysql.connector.Error as error:
         print(f"Database {DB_NAME} does not exists.")
         if error.errno == errorcode.ER_BAD_DB_ERROR:
-            create_database(cursor)
+            create_database()
             print(f"Database {DB_NAME} created successfully.")
             connection.database = DB_NAME
         else:
@@ -118,7 +118,6 @@ def create_table():
     connection.close()
 
 
-
 def insert_countries():
     """
 
@@ -126,14 +125,16 @@ def insert_countries():
     cnx = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1234',
+        password='root1995',
         database=DB_NAME)
     cursor = cnx.cursor()
-    add_country = """INSERT INTO Conditions (`name`, `url`) 
-                    VALUES (%s, %s);"""
-    for name, url in CONFIG["SURF_FORECAST"]:
+    add_country = """INSERT INTO Countries (`name`, `url`) 
+                    SELECT %s, %s
+                    WHERE NOT EXISTS (
+                        SELECT * FROM Countries WHERE Countries.name = %s AND Countries.url = %s);"""
+    for name, url in CONFIG["SURF_FORECAST"].items():
         country = (name, url)
-        cursor.execute(add_country, country)
+        cursor.execute(add_country, country + country)
     cnx.commit()
     cursor.close()
     cnx.close()
@@ -146,15 +147,20 @@ def insert_areas(areas_links, country):
     cnx = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1234',
+        password='root1995',
         database=DB_NAME)
     cursor = cnx.cursor()
-    add_area = f"""INSERT INTO Conditions (`name`, `url`, `country_id`) 
-                    VALUES (%s, %s, (SELECT id FROM Countries where Countries.name == {country});"""
+    add_area = """INSERT INTO Areas (`name`, `url`, `country_id`) 
+                    SELECT %s, %s, (SELECT id FROM Countries where Countries.name = %s)
+                    WHERE NOT EXISTS (
+                        SELECT * FROM Areas 
+                        WHERE `name` = %s AND `url` = %s 
+                            AND country_id = (SELECT id FROM Countries where Countries.name = %s));"""
     for url in areas_links:
-        name = re.search(r"(\w*)-Surfing", url).group()
-        area = (name, url)
-        cursor.execute(add_area, area)
+        #name = re.search(r'/([^/-]*)(-Surfing/)', url).group(1)
+        name = url.split('/')[-3]
+        area = (name, url, country)
+        cursor.execute(add_area, area + area)
     cnx.commit()
     cursor.close()
     cnx.close()
@@ -167,7 +173,7 @@ def insert_beaches(beaches_url, area):
     cnx = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1234',
+        password='root1995',
         database=DB_NAME)
     cursor = cnx.cursor()
     add_beach = f"""INSERT INTO Conditions (`name`, `url`, `area_id`) 
@@ -188,7 +194,7 @@ def insert_conditions(beach_soup):
     cnx = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1234',
+        password='root1995',
         database=DB_NAME)
     cursor = cnx.cursor()
     beach_info = one_beach_scrapping.beach_historic(beach_soup)
@@ -206,12 +212,21 @@ def insert_conditions(beach_soup):
     cnx.close()
 
 
-def main():
+def initialize_db():
     create_table()
+    insert_countries()
+
+
+def insert_records(areas_links, country):
+    insert_areas()
 
 
 if __name__ == "__main__":
-    main()
+
+    initialize_db()
+    areas_links2 = ['https://magicseaweed.com/Central-Tel-Aviv-Surfing/113/', 'https://magicseaweed.com/Southern-Surfing/1019/', 'https://magicseaweed.com/Haifa-Surfing/1020/', 'https://magicseaweed.com/Red-Sea-Surfing/1074/']
+    country = "ISRAEL"
+    insert_areas(areas_links2, country)
 
 #TEST
 #get_url = requests.get("https://magicseaweed.com/Beit-Yanai-Surf-Report/3783/Historic/", headers=CONFIG['FAKE_USER_HEADER'])

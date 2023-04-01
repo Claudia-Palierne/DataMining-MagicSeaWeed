@@ -29,7 +29,6 @@ def extract_beaches_urls(area_urls):
     all_beaches_urls = []
     for url in area_urls:
         all_beaches_urls += selenium_scrapping.get_spot_beaches_urls(url)
-    print(all_beaches_urls)
     return all_beaches_urls
 
 
@@ -82,6 +81,7 @@ def main():
     else:
         country_forecast_urls = CONFIG["SURF_FORECAST"].get(country_to_scrap)
         areas_urls = extract_areas_urls(country_forecast_urls)
+        print(f'{areas_urls = }')
         beaches_url = extract_beaches_urls(areas_urls)
 
     if execution_mode == 'print':
