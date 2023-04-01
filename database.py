@@ -1,7 +1,5 @@
 import re
-
 import one_beach_scrapping
-from datetime import datetime
 import json
 import requests
 from bs4 import BeautifulSoup
@@ -82,9 +80,8 @@ def create_database():
     except mysql.connector.Error as error:
         print(f"Failed creating database: {error}")
         exit(1)
-    finally:
-        cursor.close()
-        connection.close()
+    cursor.close()
+    connection.close()
 
 
 def create_table():
@@ -209,10 +206,17 @@ def insert_conditions(beach_soup):
     cnx.close()
 
 
+def main():
+    create_table()
+
+
+if __name__ == "__main__":
+    main()
+
 #TEST
-get_url = requests.get("https://magicseaweed.com/Beit-Yanai-Surf-Report/3783/Historic/", headers=CONFIG['FAKE_USER_HEADER'])
-get_soup = BeautifulSoup(get_url.content, "html.parser")
-insert_conditions(get_soup)
+#get_url = requests.get("https://magicseaweed.com/Beit-Yanai-Surf-Report/3783/Historic/", headers=CONFIG['FAKE_USER_HEADER'])
+#get_soup = BeautifulSoup(get_url.content, "html.parser")
+#insert_conditions(get_soup)
 
 # TODO : ajouter excetions - si la table exist pas, si la row a deja ete ajoutee
 # TODO : changer les datatype de certaines valeurs
