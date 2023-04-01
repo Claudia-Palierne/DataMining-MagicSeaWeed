@@ -1,3 +1,5 @@
+import argparse
+
 import grequests
 import requests
 from bs4 import BeautifulSoup
@@ -9,16 +11,20 @@ with open("conf.json", "r") as jsonfile:
     CONFIG = json.load(jsonfile)
 
 
-def extract_urls():
+def extract_areas_urls(country_forecast_urls):
     """
     Extract the urls of every beach spot in the country.
     :return: list of urls string
     """
     # Extract areas' urls
-    surf_forecast_request = requests.get(CONFIG['WEBSITE_SURF_FORECAST'], headers=CONFIG['FAKE_USER_HEADER'])
+    surf_forecast_request = requests.get(country_forecast_urls, headers=CONFIG['FAKE_USER_HEADER'])
     surf_forecast_soup = BeautifulSoup(surf_forecast_request.content, "html.parser")
     area_urls = [CONFIG['HOST'] + area_link.attrs['href']
                  for area_link in surf_forecast_soup.find_all('a', class_="list-group-item h6 nomargin-top")]
+    return area_urls
+
+
+def extract_beaches_urls(area_urls):
     # Extract beaches' urls from all areas
     all_beaches_urls = []
     for url in area_urls:
@@ -48,10 +54,43 @@ def main():
     Web scrapping of the site MagicSeaWeed.
     :return: None
     """
-    beaches_url = extract_urls()
-    beaches_soup = get_soup(beaches_url)
-    for bs in beaches_soup:
-        one_beach_scrapping.print_beach_info(bs)
+
+    parser = argparse.ArgumentParser()
+    # Gets the country input by user
+    parser.add_argument("-country", type=str, choices=['ALL', 'ISRAEL', 'FRANCE', 'HAWAII'],
+                        default='ISRAEL',
+                        help="choose a country from the list to scrap")
+
+    # Get the execution mode
+    parser.add_argument("-mode", type=str, choices=['print', 'database'],
+                        default='print',
+                        help="choose a mode of execution :"
+                             "print will print the information in the std output"
+                             "whereas database will store it in the db")
+
+    # Using parser to further use the arguments
+    args = parser.parse_args()
+    country_to_scrap = args.country
+    execution_mode = args.mode
+
+    beaches_url = []
+    if country_to_scrap == 'ALL':
+        for country in ['ISRAEL', 'FRANCE', 'HAWAII']:
+            country_forecast_urls = CONFIG["SURF_FORECAST"].get(country)
+            areas_urls = extract_areas_urls(country_forecast_urls)
+            beaches_url += extract_beaches_urls(areas_urls)
+    else:
+        country_forecast_urls = CONFIG["SURF_FORECAST"].get(country_to_scrap)
+        areas_urls = extract_areas_urls(country_forecast_urls)
+        beaches_url = extract_beaches_urls(areas_urls)
+
+    if execution_mode == 'print':
+        # Previous code :
+        beaches_soup = get_soup(beaches_url)
+        for bs in beaches_soup:
+            one_beach_scrapping.print_beach_info(bs)
+    else:
+        print('Fill database')
 
 
 if __name__ == "__main__":
