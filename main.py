@@ -78,6 +78,8 @@ def main():
             country_forecast_urls = CONFIG["SURF_FORECAST"].get(country)
             areas_urls = extract_areas_urls(country_forecast_urls)
             beaches_url += extract_beaches_urls(areas_urls)
+            print(areas_urls)
+            print(beaches_url)
     else:
         country_forecast_urls = CONFIG["SURF_FORECAST"].get(country_to_scrap)
         areas_urls = extract_areas_urls(country_forecast_urls)
@@ -90,6 +92,7 @@ def main():
         for bs in beaches_soup:
             one_beach_scrapping.print_beach_info(bs)
     else:
+
         print('Fill database')
 
 

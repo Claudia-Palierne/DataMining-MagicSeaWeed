@@ -224,9 +224,13 @@ def insert_records(areas_links, country):
 if __name__ == "__main__":
 
     initialize_db()
-    areas_links2 = ['https://magicseaweed.com/Central-Tel-Aviv-Surfing/113/', 'https://magicseaweed.com/Southern-Surfing/1019/', 'https://magicseaweed.com/Haifa-Surfing/1020/', 'https://magicseaweed.com/Red-Sea-Surfing/1074/']
+    areas_links_ISRAEL = ['https://magicseaweed.com/Central-Tel-Aviv-Surfing/113/', 'https://magicseaweed.com/Southern-Surfing/1019/', 'https://magicseaweed.com/Haifa-Surfing/1020/', 'https://magicseaweed.com/Red-Sea-Surfing/1074/']
+    areas_links_ALL = ['https://magicseaweed.com/Central-Tel-Aviv-Surfing/113/', 'https://magicseaweed.com/Southern-Surfing/1019/', 'https://magicseaweed.com/Haifa-Surfing/1020/', 'https://magicseaweed.com/Red-Sea-Surfing/1074/',
+                       'https://magicseaweed.com/The-Channel-Surfing/26/', 'https://magicseaweed.com/Brittany-North-Surfing/27/', 'https://magicseaweed.com/Finistere-South-Surfing/28/', 'https://magicseaweed.com/Morbihan-Loire-Atlantique-Surfing/29/', 'https://magicseaweed.com/Vendee-Surfing/30/', 'https://magicseaweed.com/Charente-Maritime-Surfing/31/', 'https://magicseaweed.com/Gironde-Surfing/32/', 'https://magicseaweed.com/Landes-Surfing/33/', 'https://magicseaweed.com/Hossegor-Surfing/34/', 'https://magicseaweed.com/Biarritz-Anglet-Surfing/35/', 'https://magicseaweed.com/La-Cote-Basque-Surfing/36/', 'https://magicseaweed.com/Mediterranean-France-West-Surfing/39/', 'https://magicseaweed.com/Southern-France-East-Surfing/40/',
+                       'https://magicseaweed.com/Big-Island-Surfing/179/', 'https://magicseaweed.com/Kauai-Surfing/177/', 'https://magicseaweed.com/North-West-Maui-Surfing/178/', 'https://magicseaweed.com/Oahu-North-Shore-Surfing/176/', 'https://magicseaweed.com/Oahu-South-Shore-Surfing/366/']
+
     country = "ISRAEL"
-    insert_areas(areas_links2, country)
+    insert_areas(areas_links_ALL, country)
 
 #TEST
 #get_url = requests.get("https://magicseaweed.com/Beit-Yanai-Surf-Report/3783/Historic/", headers=CONFIG['FAKE_USER_HEADER'])
