@@ -74,7 +74,7 @@ def create_database():
     connection = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1995')
+        password='root1234')
     cursor = connection.cursor()
     # Create database and tables
     try:
@@ -90,7 +90,7 @@ def create_table():
     connection = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1995')
+        password='root1234')
 
     cursor = connection.cursor()
     try:
@@ -127,7 +127,7 @@ def insert_countries():
     cnx = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1995',
+        password='root1234',
         database=DB_NAME)
     cursor = cnx.cursor()
     add_country = """INSERT INTO Countries (`name`, `url`) 
@@ -149,7 +149,7 @@ def insert_areas(areas_links, country):
     cnx = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1995',
+        password='root1234',
         database=DB_NAME)
     cursor = cnx.cursor()
     add_area = """INSERT INTO Areas (`name`, `url`, `country_id`) 
@@ -175,7 +175,7 @@ def insert_beaches(area_dict):
     cnx = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1995',
+        password='root1234',
         database=DB_NAME)
     cursor = cnx.cursor()
     add_beach = """INSERT INTO Beaches (`name`, `url`, `area_id`) 
@@ -203,7 +203,7 @@ def insert_conditions(beach_info):
     cnx = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1995',
+        password='root1234',
         database=DB_NAME)
     cursor = cnx.cursor()
     add_condition = """INSERT INTO Conditions (`beach_id`, `timestamp`, `weather`, `wave_height_min(m)`, `wave_height_max(m)`, 

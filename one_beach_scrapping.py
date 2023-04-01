@@ -49,18 +49,13 @@ def extract_swell(beach_soup):
         if a.text.strip() == "Flat":
             swell.append([0.0, 0.0])
         else:
-            tmp = re.findall(r"(\d+(\.\d+)?)-?(\d+(\.\d+)?)?m", a.text)
-            min_swell = float(tmp[0])
-            max_swell = float(tmp[2]) if tmp[2] else None
-            if max_swell is not None:
-                swell.append([min_swell, max_swell])
+            pattern = r"[\d.]+"
+            matches = re.findall(pattern, a.text)
+            tmp = [float(match) for match in matches]
+            if len(tmp) < 2:
+                swell.append(tmp + tmp)
             else:
-                swell.append([min_swell, min_swell])
-            #values.append(int_value)
-            #if len(tmp) < 2:
-                #swell.append(tmp + tmp)
-            #else:
-                #swell.append(tmp)
+                swell.append(tmp)
     return swell
 
 
