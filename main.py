@@ -71,48 +71,41 @@ def main():
 
     # Using parser to further use the arguments
     args = parser.parse_args()
-    country_to_scrap = args.country
-    execution_mode = args.mode
+    country_to_scrap = args.country.upper()
+    execution_mode = args.mode.lower()
 
-    beaches_url = []
     if country_to_scrap == 'ALL':
-        for country in ['ISRAEL', 'FRANCE', 'HAWAII']:
-            country_forecast_urls = CONFIG["SURF_FORECAST"].get(country)
-            areas_urls = extract_areas_urls(country_forecast_urls)
-            beaches_url += extract_beaches_urls(areas_urls)
-            print(areas_urls)
-            print(beaches_url)
+        country_to_scrap = CONFIG["SURF_FORECAST"].keys()
     else:
-        country_forecast_urls = CONFIG["SURF_FORECAST"].get(country_to_scrap)
-        areas_urls = extract_areas_urls(country_forecast_urls)
+        country_to_scrap = [country_to_scrap]
 
+    for idx, country in enumerate(country_to_scrap):
+        # Extracting urls
+        country_forecast_urls = CONFIG["SURF_FORECAST"].get(country)
+        areas_urls = extract_areas_urls(country_forecast_urls)
         area_dict = {}
+        beaches_url = []
         for url in areas_urls:
             beach_per_area_url = extract_beaches_urls([url])
             area_name = url.split('/')[-3]
             area_dict[area_name] = beach_per_area_url
-
             beaches_url += beach_per_area_url
-        print(area_dict)
 
-    if execution_mode == 'print':
-        # Previous code :
-        beaches_soup = get_soup(beaches_url)
-        for bs in beaches_soup:
-            beach_data = one_beach_scrapping.beach_historic(bs)
-            one_beach_scrapping.print_beach_info(beach_data)
-    else:
+        # Execution mode
+        if execution_mode == 'print':
+            beaches_soup = get_soup(beaches_url)
+            for bs in beaches_soup:
+                beach_data = one_beach_scrapping.beach_historic(bs)
+                one_beach_scrapping.print_beach_info(beach_data)
+        else:
+            database.initialize_db() if idx == 0 else None
+            database.insert_areas(areas_urls, country)
+            database.insert_beaches(area_dict)
 
-        database.initialize_db()
-        database.insert_areas(areas_urls, country_to_scrap)
-        database.insert_beaches(area_dict)
-
-        beaches_soup = get_soup(beaches_url)
-        for bs in beaches_soup:
-            beach_data = one_beach_scrapping.beach_historic(bs)
-            database.insert_conditions(beach_data)
-
-        print('Fill database')
+            beaches_soup = get_soup(beaches_url)
+            for bs in beaches_soup:
+                beach_data = one_beach_scrapping.beach_historic(bs)
+                database.insert_conditions(beach_data)
 
 
 if __name__ == "__main__":

@@ -74,7 +74,7 @@ def create_database():
     connection = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1234')
+        password='root1995')
     cursor = connection.cursor()
     # Create database and tables
     try:
@@ -90,7 +90,7 @@ def create_table():
     connection = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1234')
+        password='root1995')
 
     cursor = connection.cursor()
     try:
@@ -127,7 +127,7 @@ def insert_countries():
     cnx = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1234',
+        password='root1995',
         database=DB_NAME)
     cursor = cnx.cursor()
     add_country = """INSERT INTO Countries (`name`, `url`) 
@@ -149,7 +149,7 @@ def insert_areas(areas_links, country):
     cnx = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1234',
+        password='root1995',
         database=DB_NAME)
     cursor = cnx.cursor()
     add_area = """INSERT INTO Areas (`name`, `url`, `country_id`) 
@@ -175,7 +175,7 @@ def insert_beaches(area_dict):
     cnx = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1234',
+        password='root1995',
         database=DB_NAME)
     cursor = cnx.cursor()
     add_beach = """INSERT INTO Beaches (`name`, `url`, `area_id`) 
@@ -203,21 +203,21 @@ def insert_conditions(beach_info):
     cnx = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='root1234',
+        password='root1995',
         database=DB_NAME)
     cursor = cnx.cursor()
     add_condition = """INSERT INTO Conditions (`beach_id`, `timestamp`, `weather`, `wave_height_min(m)`, `wave_height_max(m)`, 
                     `temperature(C)`, `steady_wind_speed(kph)`, `gust_wind_speed(kph)`, `surfability`, `wind_direction`) 
-                    SELECT (SELECT id FROM Beaches where Beaches.name = %s), %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    SELECT (SELECT id FROM Beaches where Beaches.url = %s), %s, %s, %s, %s, %s, %s, %s, %s, %s
                     WHERE NOT EXISTS (
                     SELECT * FROM Conditions 
-                    WHERE beach_id = (SELECT id FROM Beaches where Beaches.name = %s) AND timestamp = %s AND weather = %s
+                    WHERE beach_id = (SELECT id FROM Beaches where Beaches.url = %s) AND timestamp = %s AND weather = %s
                     AND `wave_height_min(m)` = %s AND `wave_height_max(m)` = %s AND `temperature(C)` = %s AND `steady_wind_speed(kph)` = %s
                     AND `gust_wind_speed(kph)` = %s AND surfability = %s AND wind_direction = %s
-                    );"""
+                    ); """
 
     for i, time in enumerate(beach_info['timestamp']):
-        condition = (beach_info['name'], beach_info['timestamp'][i],
+        condition = (beach_info['url'], beach_info['timestamp'][i],
                      beach_info['weather'][i], beach_info['swell'][i][0], beach_info['swell'][i][1],
                      beach_info['temperature'][i], beach_info['steady_wind_speed'][i], beach_info['gust_wind_speed'][i],
                      beach_info['surfability'][i], beach_info['direction'][i])
@@ -255,4 +255,3 @@ if __name__ == "__main__":
     insert_conditions(cond)
 
 # TODO : nettoyer le code.
-#

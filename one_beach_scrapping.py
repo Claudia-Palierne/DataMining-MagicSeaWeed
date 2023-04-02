@@ -112,6 +112,15 @@ def extract_name(beach_soup):
     return name
 
 
+def extract_url(beach_soup):
+    """
+    Extract the url of the surf spot
+    :param beach_soup: BeautifulSoup Object
+    :return: a string of the url of the surf spot.
+    """
+    url = beach_soup.find("link")['href'].replace("fr.", "").replace("http", "https")
+    return url
+
 def beach_historic(beach_soup):
     """
     Put all the extracted information of beach into a dictionary.
@@ -119,6 +128,7 @@ def beach_historic(beach_soup):
     :return: a dictionary
     """
     infos = {}
+    infos['url'] = extract_url(beach_soup)
     infos['name'] = extract_name(beach_soup)
     infos['timestamp'] = extract_timestamp(beach_soup)
     infos['weather'] = extract_weather(beach_soup)
