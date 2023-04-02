@@ -27,7 +27,7 @@ The data is not publicly available via an API.
 ## Project Structure
 * main.py: The main script that initiates the web scraping process. 
 * one_beach_scrapping.py: Contains the functions for retrieving the data of interest (detailed below) given a certain beach url. 
-* selenium_scrapping.py: Contains the functions for getting all beaches urls using Selenium.
+* url_extraction.py: Contains the functions for getting all beaches urls using Selenium.
 * conf.json : the configuration file read by all the .py
 
 ## Contributors

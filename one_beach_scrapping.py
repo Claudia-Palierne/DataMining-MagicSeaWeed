@@ -108,7 +108,6 @@ def extract_name(beach_soup):
     :return: a string of the name of the surf spot.
     """
     name = re.search(r"/([^/]+?)-Surf", beach_soup.find("link")['href']).group()[1:]
-    print('extract name : ', name)
     return name
 
 
