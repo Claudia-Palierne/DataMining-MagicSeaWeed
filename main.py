@@ -70,7 +70,6 @@ def main():
             for bs in beaches_soup:
                 beach_data = one_beach_scrapping.beach_historic(bs)
                 database.insert_conditions(beach_data)
-                print(f'{country}: beach successfully written to database')
 
 
 if __name__ == "__main__":
