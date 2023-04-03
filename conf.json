@@ -12,5 +12,6 @@
   "ARCHIVE": "Historic/",
   "WAIT_TIME_SECOND": 5,
   "RESPONSE_CODE_SUCCESS": 200,
-  "DAYS_IN_WEEK": 7
+  "DAYS_IN_WEEK": 7,
+  "IDX_AREA_NAME": -3
 }

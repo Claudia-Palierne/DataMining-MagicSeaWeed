@@ -170,7 +170,7 @@ def insert_areas(areas_links, country):
                         WHERE `name` = %s AND `url` = %s 
                             AND country_id = (SELECT id FROM Countries where Countries.name = %s));"""
     for url in areas_links:
-        name = url.split('/')[-3]
+        name = url.split('/')[CONFIG['IDX_AREA_NAME']]
         area = (name, url, country)
         cursor.execute(add_area, area + area)
         print(f'{area} successfully inserted into db')

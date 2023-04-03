@@ -48,7 +48,7 @@ def main():
         area_dict = {}
         beaches_url = []
         for url in areas_urls:
-            area_name = url.split('/')[-3]
+            area_name = url.split('/')[CONFIG['IDX_AREA_NAME']]
             beach_per_area_url = url_extraction.extract_beaches_urls([url])
             print(f'{country}: {area_name}: beaches urls extraction successful')
             area_dict[area_name] = beach_per_area_url
