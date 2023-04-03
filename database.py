@@ -10,6 +10,11 @@ from mysql.connector import errorcode
 with open("conf.json", "r") as jsonfile:
     CONFIG = json.load(jsonfile)
 
+with open("conf_sql.json", "r") as jsonfile:
+    SQL_CONFIG = json.load(jsonfile)
+
+print(SQL_CONFIG)
+
 DB_NAME = "MagicSeaWeed"
 TABLES = {}
 TABLES['Countries'] = (
@@ -63,10 +68,11 @@ def create_database():
     This fonction will create a database in SQL.
     :return: None
     """
+
     connection = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='root1995')
+        host=SQL_CONFIG["host"],
+        user=SQL_CONFIG["user"],
+        password=SQL_CONFIG["password"])
     cursor = connection.cursor()
     # Create database and tables
     try:
@@ -84,9 +90,9 @@ def create_table():
     :return: None
     """
     connection = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='root1995')
+        host=SQL_CONFIG["host"],
+        user=SQL_CONFIG["user"],
+        password=SQL_CONFIG["password"])
 
     cursor = connection.cursor()
     try:
@@ -122,9 +128,9 @@ def insert_countries():
     :return: None
     """
     cnx = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='root1995',
+        host=SQL_CONFIG["host"],
+        user=SQL_CONFIG["user"],
+        password=SQL_CONFIG["password"],
         database=DB_NAME)
     cursor = cnx.cursor()
     add_country = """INSERT INTO Countries (`name`, `url`) 
@@ -147,9 +153,9 @@ def insert_areas(areas_links, country):
     :return: None
     """
     cnx = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='root1995',
+        host=SQL_CONFIG["host"],
+        user=SQL_CONFIG["user"],
+        password=SQL_CONFIG["password"],
         database=DB_NAME)
     cursor = cnx.cursor()
     add_area = """INSERT INTO Areas (`name`, `url`, `country_id`) 
@@ -174,9 +180,9 @@ def insert_beaches(area_dict):
     :return: None
     """
     cnx = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='root1995',
+        host=SQL_CONFIG["host"],
+        user=SQL_CONFIG["user"],
+        password=SQL_CONFIG["password"],
         database=DB_NAME)
     cursor = cnx.cursor()
     add_beach = """INSERT INTO Beaches (`name`, `url`, `area_id`) 
@@ -203,9 +209,9 @@ def insert_conditions(beach_info):
     :return: None
     """
     cnx = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='root1995',
+        host=SQL_CONFIG["host"],
+        user=SQL_CONFIG["user"],
+        password=SQL_CONFIG["password"],
         database=DB_NAME)
     cursor = cnx.cursor()
     add_condition = """INSERT INTO Conditions (`beach_id`, `timestamp`, `weather`, `wave_height_min(m)`, `wave_height_max(m)`, 

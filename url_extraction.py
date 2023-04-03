@@ -47,7 +47,6 @@ def get_spot_beaches_urls(url):
         return beaches_urls
 
 
-
 def extract_areas_urls(country_forecast_urls):
     """
     Extract the urls of every beach spot in the country.
@@ -59,7 +58,6 @@ def extract_areas_urls(country_forecast_urls):
     area_urls = [CONFIG['HOST'] + area_link.attrs['href']
                  for area_link in surf_forecast_soup.find_all('a', class_="list-group-item h6 nomargin-top")]
     return area_urls
-
 
 
 def extract_beaches_urls(area_urls):
@@ -88,4 +86,3 @@ def get_soup(urls):
         else:
             request_soup += [BeautifulSoup(response.content, "html.parser")]
     return request_soup
-
