@@ -88,3 +88,4 @@ Given the past and current weather data, outputs the best spot in the country to
 
 * BeautifulSoup and HTML:
 [realpython.com](https://realpython.com/beautiful-soup-web-scraper-python/)
+

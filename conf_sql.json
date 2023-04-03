@@ -1,11 +1,6 @@
 {
-  "user": "root",
-  "password": "XXX",
-  "db_name" : "MagicSeaWeed",
-  "tables" : {
-    "Countries": "CREATE TABLE `Countries` ( \n    `id` int(11) NOT NULL AUTO_INCREMENT,\n    `name` varchar(14) NOT NULL,\n    `url` varchar(255) NOT NULL,\n    PRIMARY KEY (`id`)\n    ) ENGINE=InnoDB",
-    "Areas": "CREATE TABLE `Areas` ( \n    `id` int(11) NOT NULL AUTO_INCREMENT,\n    `name` varchar(255) NOT NULL,\n    `url` varchar(255) NOT NULL,\n    `country_id` int(11) NOT NULL,\n    PRIMARY KEY (`id`),\n    FOREIGN KEY (country_id) REFERENCES Countries(id)\n    ) ENGINE=InnoDB",
-    "Beaches": "CREATE TABLE `Beaches` ( \n    `id` int(11) NOT NULL AUTO_INCREMENT,\n    `name` varchar(255) NOT NULL,\n    `url` varchar(255) NOT NULL,\n    `area_id` int(11) NOT NULL,\n    PRIMARY KEY (`id`),\n    FOREIGN KEY (area_id) REFERENCES Areas(id)\n    ) ENGINE=InnoDB",
-    "Conditions": "CREATE TABLE `Conditions` ( \n    `id` int(11) NOT NULL AUTO_INCREMENT,\n    `beach_id` int(11) NOT NULL,\n    `timestamp` datetime NOT NULL,\n    `weather` varchar(255) NOT NULL,\n    `wave_height_min(m)` float(24) NOT NULL,\n    `wave_height_max(m)` float(24) NOT NULL,\n    `temperature(C)` int(11) NOT NULL,\n    `steady_wind_speed(kph)` int(11) NOT NULL,\n    `gust_wind_speed(kph)` int(11) NOT NULL,\n    `surfability` int(11) NOT NULL,\n    `wind_direction` varchar(255) NOT NULL,\n    PRIMARY KEY (`id`),\n    FOREIGN KEY (beach_id) REFERENCES Beaches(id)\n    ) ENGINE=InnoDB"
-  }
+  "HOST": "localhost",
+  "USER": "root",
+  "PASSWORD": "root1995",
+  "DB_NAME": "MagicSeaWeed"
 }

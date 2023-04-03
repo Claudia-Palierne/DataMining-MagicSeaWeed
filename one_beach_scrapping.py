@@ -150,8 +150,8 @@ def print_beach_info(beach_info):
     for i, time in enumerate(beach_info['timestamp']):
         if i % 8 == 0:
             print(beach_info['timestamp'][i].date())
-            print("""Time | Weather  | Temperature | Swell (m) [min-max]| 
-            Steady Wind Speed (KpH) | Gust Wind Speed (KpH) |  Surfability [0-5]""")
+            print("Time | Weather  | Temperature | Swell (m) [min-max]| \
+Steady Wind Speed (KpH) | Gust Wind Speed (KpH) |  Surfability [0-5]")
         print(beach_info['timestamp'][i].time(),
               beach_info['weather'][i],
               beach_info['temperature'][i],
