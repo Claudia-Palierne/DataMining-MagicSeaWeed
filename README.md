@@ -17,7 +17,8 @@ The data is not publicly available via an API.
 ## Requirements
 
 Please run the following in order to install all the required modules that the code to run :
-`pip install requirements.txt`
+
+```pip install requirements.txt```
 
 ## How to Run
 
@@ -34,6 +35,7 @@ EXAMPLE : main.py -mode database -country Hawaii will print to the stdout all th
 * main.py: The main script that initiates the web scraping process. 
 * one_beach_scrapping.py: Contains the functions for retrieving the data of interest (detailed below) for one url page. 
 * url_extraction.py: Contains the functions for getting all beaches urls using Selenium.
+* database.py : containes the function related to SQL, i.e. create database and table and inserting the values.
 * conf.json : the configuration file read by all the .py
 * conf_sql.json : the configuration file read for the sql queries.
 
