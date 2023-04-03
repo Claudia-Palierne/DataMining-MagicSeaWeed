@@ -42,12 +42,15 @@ def main():
     for idx, country in enumerate(country_to_scrap):
         # Extracting urls
         country_forecast_urls = CONFIG["SURF_FORECAST"].get(country)
+        print(f'{country}: url extraction successful')
         areas_urls = url_extraction.extract_areas_urls(country_forecast_urls)
+        print(f'{country}: areas url extraction successful')
         area_dict = {}
         beaches_url = []
         for url in areas_urls:
-            beach_per_area_url = url_extraction.extract_beaches_urls([url])
             area_name = url.split('/')[-3]
+            beach_per_area_url = url_extraction.extract_beaches_urls([url])
+            print(f'{country}: {area_name}: beaches urls extraction successful')
             area_dict[area_name] = beach_per_area_url
             beaches_url += beach_per_area_url
 
@@ -67,6 +70,7 @@ def main():
             for bs in beaches_soup:
                 beach_data = one_beach_scrapping.beach_historic(bs)
                 database.insert_conditions(beach_data)
+                print(f'{country}: beach successfully written to database')
 
 
 if __name__ == "__main__":

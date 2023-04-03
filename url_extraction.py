@@ -63,7 +63,11 @@ def extract_areas_urls(country_forecast_urls):
 
 
 def extract_beaches_urls(area_urls):
+    """
     # Extract beaches' urls from all areas
+    :param area_urls: a list with the areas urls
+    :return: a list with the urls of that beach's area
+    """
     all_beaches_urls = []
     for url in area_urls:
         all_beaches_urls += get_spot_beaches_urls(url)
