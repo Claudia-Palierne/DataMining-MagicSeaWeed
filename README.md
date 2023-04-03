@@ -47,7 +47,7 @@ The tables are constructed in the following manner:
 
 ## Contributors
 
-<a href="https://www.linkedin.com/in/claudia-palierne/">
+<a href="https://www.linkedin.com/in/claudia-palierne-0188631b9/">
   <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn logo" style="width:15px;height:15px;">
 </a>
 Claudia Palierne 
