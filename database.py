@@ -226,11 +226,8 @@ def insert_conditions(beach_info):
                     `surfability`, `wind_direction`) 
                     SELECT (SELECT id FROM Beaches where Beaches.url = %s), %s, %s, %s, %s, %s, %s, %s, %s, %s
                     WHERE NOT EXISTS (
-                    SELECT * FROM Conditions 
-                    WHERE beach_id = (SELECT id FROM Beaches where Beaches.url = %s) AND timestamp = %s AND weather = %s
-                    AND `wave_height_min(m)` = %s AND `wave_height_max(m)` = %s AND `temperature(C)` = %s 
-                    AND `steady_wind_speed(kph)` = %s AND `gust_wind_speed(kph)` = %s AND surfability = %s 
-                    AND wind_direction = %s
+                        SELECT * FROM Conditions 
+                        WHERE beach_id = (SELECT id FROM Beaches where Beaches.url = %s) AND timestamp = %s
                     ); """
 
     for i, time in enumerate(beach_info['timestamp']):
@@ -238,7 +235,7 @@ def insert_conditions(beach_info):
                      beach_info['weather'][i], beach_info['swell'][i][0], beach_info['swell'][i][1],
                      beach_info['temperature'][i], beach_info['steady_wind_speed'][i], beach_info['gust_wind_speed'][i],
                      beach_info['surfability'][i], beach_info['direction'][i])
-        cursor.execute(add_condition, condition + condition)
+        cursor.execute(add_condition, condition + (beach_info['url'], beach_info['timestamp'][i]))
         print(f'{time} successfully inserted into db')
     cnx.commit()
     cursor.close()
