@@ -1,11 +1,14 @@
 import re
-import grequests
-import one_beach_scrapping
 import json
-import requests
-from bs4 import BeautifulSoup
 import mysql.connector
 from mysql.connector import errorcode
+
+# These are actually used :
+import grequests
+import one_beach_scrapping
+
+import requests
+from bs4 import BeautifulSoup
 
 with open("conf.json", "r") as jsonfile:
     CONFIG = json.load(jsonfile)
@@ -176,7 +179,6 @@ def insert_areas(areas_links, country):
     cnx.close()
 
 
-
 def insert_beaches(area_dict):
     """
     This function will insert the data inside the table Beaches in SQL.
@@ -220,14 +222,16 @@ def insert_conditions(beach_info):
         database=SQL_CONFIG['DB_NAME'])
     cursor = cnx.cursor()
 
-    add_condition = """INSERT INTO Conditions (`beach_id`, `timestamp`, `weather`, `wave_height_min(m)`, `wave_height_max(m)`, 
-                    `temperature(C)`, `steady_wind_speed(kph)`, `gust_wind_speed(kph)`, `surfability`, `wind_direction`) 
+    add_condition = """INSERT INTO Conditions (`beach_id`, `timestamp`, `weather`, `wave_height_min(m)`, 
+                    `wave_height_max(m)`, `temperature(C)`, `steady_wind_speed(kph)`, `gust_wind_speed(kph)`, 
+                    `surfability`, `wind_direction`) 
                     SELECT (SELECT id FROM Beaches where Beaches.url = %s), %s, %s, %s, %s, %s, %s, %s, %s, %s
                     WHERE NOT EXISTS (
                     SELECT * FROM Conditions 
                     WHERE beach_id = (SELECT id FROM Beaches where Beaches.url = %s) AND timestamp = %s AND weather = %s
-                    AND `wave_height_min(m)` = %s AND `wave_height_max(m)` = %s AND `temperature(C)` = %s AND `steady_wind_speed(kph)` = %s
-                    AND `gust_wind_speed(kph)` = %s AND surfability = %s AND wind_direction = %s
+                    AND `wave_height_min(m)` = %s AND `wave_height_max(m)` = %s AND `temperature(C)` = %s 
+                    AND `steady_wind_speed(kph)` = %s AND `gust_wind_speed(kph)` = %s AND surfability = %s 
+                    AND wind_direction = %s
                     ); """
 
     for i, time in enumerate(beach_info['timestamp']):
@@ -244,7 +248,7 @@ def insert_conditions(beach_info):
 
 def initialize_db():
     """
-    This function initialise the data base, in order to insert the scrapping data.
+    This function initialise the database, in order to insert the scrapping data.
     :return: None
     """
     create_table()
