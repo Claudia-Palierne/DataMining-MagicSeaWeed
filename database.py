@@ -6,7 +6,6 @@ from mysql.connector import errorcode
 # These are actually used :
 import grequests
 import one_beach_scrapping
-
 import requests
 from bs4 import BeautifulSoup
 

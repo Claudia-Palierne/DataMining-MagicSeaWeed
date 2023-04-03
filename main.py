@@ -1,6 +1,5 @@
 import argparse
 
-
 import database
 import one_beach_scrapping
 import url_extraction
