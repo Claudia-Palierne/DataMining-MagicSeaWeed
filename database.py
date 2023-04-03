@@ -1,76 +1,28 @@
 import re
-import grequests
-import one_beach_scrapping
 import json
-import requests
-from bs4 import BeautifulSoup
 import mysql.connector
 from mysql.connector import errorcode
 
 with open("conf.json", "r") as jsonfile:
     CONFIG = json.load(jsonfile)
 
-DB_NAME = "MagicSeaWeed"
-TABLES = {}
-TABLES['Countries'] = (
-    """CREATE TABLE `Countries` ( 
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `name` varchar(14) NOT NULL,
-    `url` varchar(255) NOT NULL,
-    PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB""")
-
-TABLES['Areas'] = (
-    """CREATE TABLE `Areas` ( 
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `name` varchar(255) NOT NULL,
-    `url` varchar(255) NOT NULL,
-    `country_id` int(11) NOT NULL,
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (country_id) REFERENCES Countries(id)
-    ) ENGINE=InnoDB""")
-
-TABLES['Beaches'] = (
-    """CREATE TABLE `Beaches` ( 
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `name` varchar(255) NOT NULL,
-    `url` varchar(255) NOT NULL,
-    `area_id` int(11) NOT NULL,
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (area_id) REFERENCES Areas(id)
-    ) ENGINE=InnoDB""")
-
-TABLES['Conditions'] = (
-    """CREATE TABLE `Conditions` ( 
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `beach_id` int(11) NOT NULL,
-    `timestamp` datetime NOT NULL,
-    `weather` varchar(255) NOT NULL,
-    `wave_height_min(m)` float(24) NOT NULL,
-    `wave_height_max(m)` float(24) NOT NULL,
-    `temperature(C)` int(11) NOT NULL,
-    `steady_wind_speed(kph)` int(11) NOT NULL,
-    `gust_wind_speed(kph)` int(11) NOT NULL,
-    `surfability` int(11) NOT NULL,
-    `wind_direction` varchar(255) NOT NULL,
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (beach_id) REFERENCES Beaches(id)
-    ) ENGINE=InnoDB""")
+with open("conf_sql.json", "r") as jsonfile:
+    CONFIG_SQL = json.load(jsonfile)
 
 
 def create_database():
     """
-    This fonction will create a database in SQL.
+    This function will create a database in SQL.
     :return: None
     """
     connection = mysql.connector.connect(
         host='localhost',
-        user='root',
-        password='root1995')
+        user=CONFIG_SQL['user'],
+        password=CONFIG_SQL['password'])
     cursor = connection.cursor()
     # Create database and tables
     try:
-        cursor.execute(f"CREATE DATABASE {DB_NAME} DEFAULT CHARACTER SET 'utf8'")
+        cursor.execute(f"CREATE DATABASE {CONFIG_SQL['db_name']} DEFAULT CHARACTER SET 'utf8'")
     except mysql.connector.Error as error:
         print(f"Failed creating database: {error}")
         exit(1)
@@ -80,28 +32,28 @@ def create_database():
 
 def create_table():
     """
-    This function will create the tables inside the database.
+    This function will create the table inside the database.
     :return: None
     """
     connection = mysql.connector.connect(
         host='localhost',
-        user='root',
-        password='root1995')
+        user=CONFIG_SQL['user'],
+        password=CONFIG_SQL['password'])
 
     cursor = connection.cursor()
     try:
-        cursor.execute("USE {}".format(DB_NAME))
+        cursor.execute("USE {}".format(CONFIG_SQL['db_name']))
     except mysql.connector.Error as error:
-        print(f"Database {DB_NAME} does not exists.")
+        print(f"Database {CONFIG_SQL['db_name']} does not exists.")
         if error.errno == errorcode.ER_BAD_DB_ERROR:
             create_database()
-            print(f"Database {DB_NAME} created successfully.")
-            connection.database = DB_NAME
+            print(f"Database {CONFIG_SQL['db_name']} created successfully.")
+            connection.database = CONFIG_SQL['db_name']
         else:
             print(error)
             exit(1)
-    for table_name in TABLES:
-        table_description = TABLES[table_name]
+    for table_name in CONFIG_SQL['tables'].keys():
+        table_description = CONFIG_SQL['tables'].get(table_name)
         try:
             print("Creating table {}: ".format(table_name), end='')
             cursor.execute(table_description)
@@ -123,9 +75,9 @@ def insert_countries():
     """
     cnx = mysql.connector.connect(
         host='localhost',
-        user='root',
-        password='root1995',
-        database=DB_NAME)
+        user=CONFIG_SQL['user'],
+        password=CONFIG_SQL['password'],
+        database=CONFIG_SQL['db_name'])
     cursor = cnx.cursor()
     add_country = """INSERT INTO Countries (`name`, `url`) 
                     SELECT %s, %s
@@ -148,9 +100,9 @@ def insert_areas(areas_links, country):
     """
     cnx = mysql.connector.connect(
         host='localhost',
-        user='root',
-        password='root1995',
-        database=DB_NAME)
+        user=CONFIG_SQL['user'],
+        password=CONFIG_SQL['password'],
+        database=CONFIG_SQL['db_name'])
     cursor = cnx.cursor()
     add_area = """INSERT INTO Areas (`name`, `url`, `country_id`) 
                     SELECT %s, %s, (SELECT id FROM Countries where Countries.name = %s)
@@ -175,9 +127,9 @@ def insert_beaches(area_dict):
     """
     cnx = mysql.connector.connect(
         host='localhost',
-        user='root',
-        password='root1995',
-        database=DB_NAME)
+        user=CONFIG_SQL['user'],
+        password=CONFIG_SQL['password'],
+        database=CONFIG_SQL['db_name'])
     cursor = cnx.cursor()
     add_beach = """INSERT INTO Beaches (`name`, `url`, `area_id`) 
                         SELECT %s, %s, (SELECT id FROM Areas where Areas.name = %s)
@@ -199,23 +151,25 @@ def insert_beaches(area_dict):
 def insert_conditions(beach_info):
     """
     This function will insert the data of one beach inside the table Conditions in SQL.
-    :param beach_info: a dictionnary of all the information for one beach.
+    :param beach_info: a dictionary of all the information for one beach.
     :return: None
     """
     cnx = mysql.connector.connect(
         host='localhost',
-        user='root',
-        password='root1995',
-        database=DB_NAME)
+        user=CONFIG_SQL['user'],
+        password=CONFIG_SQL['user'],
+        database=CONFIG_SQL['db_name'])
     cursor = cnx.cursor()
-    add_condition = """INSERT INTO Conditions (`beach_id`, `timestamp`, `weather`, `wave_height_min(m)`, `wave_height_max(m)`, 
-                    `temperature(C)`, `steady_wind_speed(kph)`, `gust_wind_speed(kph)`, `surfability`, `wind_direction`) 
+    add_condition = """INSERT INTO Conditions (`beach_id`, `timestamp`, `weather`, `wave_height_min(m)`,
+                    `wave_height_max(m)`, `temperature(C)`, `steady_wind_speed(kph)`, `gust_wind_speed(kph)`, 
+                    `surfability`, `wind_direction`) 
                     SELECT (SELECT id FROM Beaches where Beaches.url = %s), %s, %s, %s, %s, %s, %s, %s, %s, %s
                     WHERE NOT EXISTS (
-                    SELECT * FROM Conditions 
-                    WHERE beach_id = (SELECT id FROM Beaches where Beaches.url = %s) AND timestamp = %s AND weather = %s
-                    AND `wave_height_min(m)` = %s AND `wave_height_max(m)` = %s AND `temperature(C)` = %s AND `steady_wind_speed(kph)` = %s
-                    AND `gust_wind_speed(kph)` = %s AND surfability = %s AND wind_direction = %s
+                        SELECT * FROM Conditions 
+                        WHERE beach_id = (SELECT id FROM Beaches where Beaches.url = %s) AND timestamp = %s 
+                        AND weather = %s AND `wave_height_min(m)` = %s AND `wave_height_max(m)` = %s 
+                        AND `temperature(C)` = %s AND `steady_wind_speed(kph)` = %s AND `gust_wind_speed(kph)` = %s 
+                        AND surfability = %s AND wind_direction = %s
                     ); """
 
     for i, time in enumerate(beach_info['timestamp']):
@@ -231,7 +185,7 @@ def insert_conditions(beach_info):
 
 def initialize_db():
     """
-    This function initialise the data base, in order to insert the scrapping data.
+    This function initialise the database, in order to insert the scrapping data.
     :return: None
     """
     create_table()
