@@ -47,7 +47,7 @@ def main():
         beaches_url = []
         for url in areas_urls:
             beach_per_area_url = url_extraction.extract_beaches_urls([url])
-            area_name = url.split('/')[-3]
+            area_name = url.split('/')[CONFIG["IDX_SURF_SPOT"]]
             area_dict[area_name] = beach_per_area_url
             beaches_url += beach_per_area_url
 

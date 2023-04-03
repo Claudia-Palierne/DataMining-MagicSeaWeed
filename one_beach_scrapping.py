@@ -13,7 +13,8 @@ def extract_timestamp(beach_soup):
     :return: an array of datetime.
     """
     days = [a.text for a in beach_soup.find_all("h6", class_="nomargin pull-left heavy table-header-title")]
-    hours = [a.text if a.text.strip() != 'Noon' else ' 12PM ' for a in beach_soup.find_all("td", class_="nopadding-left row-title background-clear msw-js-tooltip")][:8]
+    hours = [a.text if a.text.strip() != 'Noon' else ' 12PM '
+             for a in beach_soup.find_all("td", class_="nopadding-left row-title background-clear msw-js-tooltip")][:8]
     timestamp = [datetime.strptime('2023 ' + day + hour, '%Y %A %d/%m %I%p ') for day in days for hour in hours]
     return timestamp
 
@@ -34,7 +35,8 @@ def extract_temperature(beach_soup):
     :param beach_soup: BeautifulSoup object
     :return: an array that extract the temperature for each day and each hour.
     """
-    temperature = [int(re.search(r'\d+', a.text).group()) for a in beach_soup.find_all("h5", class_="nomargin font-sans-serif heavy")]
+    temperature = [int(re.search(r'\d+', a.text).group())
+                   for a in beach_soup.find_all("h5", class_="nomargin font-sans-serif heavy")]
     return temperature
 
 
@@ -97,7 +99,8 @@ def extract_wind_direction(beach_soup):
     :param beach_soup: BeautifulSoup Object
     :return: an array with the wind direction for each day and each hour.
     """
-    direction = [a['title'].split(", ")[1] for a in beach_soup.select('td[class*="text-center last msw-js-tooltip td-square background"]')]
+    direction = [a['title'].split(", ")[1]
+                 for a in beach_soup.select('td[class*="text-center last msw-js-tooltip td-square background"]')]
     return direction
 
 
@@ -120,30 +123,26 @@ def extract_url(beach_soup):
     url = beach_soup.find("link")['href'].replace("fr.", "").replace("http", "https")
     return url
 
+
 def beach_historic(beach_soup):
     """
     Put all the extracted information of beach into a dictionary.
     :param beach_soup: BeautifulSoup Object
     :return: a dictionary
     """
-    infos = {}
-    infos['url'] = extract_url(beach_soup)
-    infos['name'] = extract_name(beach_soup)
-    infos['timestamp'] = extract_timestamp(beach_soup)
-    infos['weather'] = extract_weather(beach_soup)
-    infos['temperature'] = extract_temperature(beach_soup)
-    infos['swell'] = extract_swell(beach_soup)
-    infos['steady_wind_speed'] = extract_wind_steady_speed(beach_soup)
-    infos['gust_wind_speed'] = extract_wind_gust_speed(beach_soup)
-    infos['direction'] = extract_wind_direction(beach_soup)
-    infos['surfability'] = extract_swell_rating(beach_soup)
+    infos = {'url': extract_url(beach_soup), 'name': extract_name(beach_soup),
+             'timestamp': extract_timestamp(beach_soup), 'weather': extract_weather(beach_soup),
+             'temperature': extract_temperature(beach_soup), 'swell': extract_swell(beach_soup),
+             'steady_wind_speed': extract_wind_steady_speed(beach_soup),
+             'gust_wind_speed': extract_wind_gust_speed(beach_soup), 'direction': extract_wind_direction(beach_soup),
+             'surfability': extract_swell_rating(beach_soup)}
     return infos
 
 
 def print_beach_info(beach_info):
     """
     Print all the info that were extracted in the surf spot.
-    :param beach_soup: BeautifulSoup Object
+    :param beach_info: BeautifulSoup Object
     :return: None
     """
     # beach_info = beach_historic(beach_soup)
@@ -151,7 +150,8 @@ def print_beach_info(beach_info):
     for i, time in enumerate(beach_info['timestamp']):
         if i % 8 == 0:
             print(beach_info['timestamp'][i].date())
-            print("Time | Weather  | Temperature | Swell (m) [min-max]| Steady Wind Speed (KpH) | Gust Wind Speed (KpH) |  Surfability [0-5]")
+            print("""Time | Weather  | Temperature | Swell (m) [min-max]| 
+            Steady Wind Speed (KpH) | Gust Wind Speed (KpH) |  Surfability [0-5]""")
         print(beach_info['timestamp'][i].time(),
               beach_info['weather'][i],
               beach_info['temperature'][i],

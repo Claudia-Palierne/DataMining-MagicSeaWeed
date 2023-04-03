@@ -26,9 +26,11 @@ Please run the following in order to install all the required modules that the c
 * Run the main Python script using python main.py withthe following options passed as arguments :
   - `-mode` : whether should the data be print in the stdout or store in a SQL database (more information about this option below)
   - `-country` : the country from which you want to extract the data : Hawaii, France or Israel. You can also extract all of them with choosing the "ALL" option.
+EXAMPLE : `main.py -mode database -country Hawaii` will print to the stdout all the data from every beach in Hawaii.
 
-EXAMPLE : main.py -mode database -country Hawaii will print to the stdout all the data from every beach in Hawaii.
-
+* Connect to your sql local server
+  - In the conf_sql.json, at line 3 : `"password": "XXX"` input your own password instead of the 'XXX'
+  
 
 ## Project Structure
 
