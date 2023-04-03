@@ -1,6 +1,6 @@
 {
   "user": "root",
-  "password": "root1234",
+  "password": "XXX",
   "db_name" : "MagicSeaWeed",
   "tables" : {
     "Countries": "CREATE TABLE `Countries` ( \n    `id` int(11) NOT NULL AUTO_INCREMENT,\n    `name` varchar(14) NOT NULL,\n    `url` varchar(255) NOT NULL,\n    PRIMARY KEY (`id`)\n    ) ENGINE=InnoDB",
