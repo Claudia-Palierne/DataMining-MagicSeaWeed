@@ -29,7 +29,8 @@ Please run the following in order to install all the required modules that the c
 EXAMPLE : `main.py -mode database -country Hawaii` will print to the stdout all the data from every beach in Hawaii.
 
 * Connect to your sql local server
-  - In the conf_sql.json, at line 3 : `"password": "XXX"` input your own password instead of the 'XXX'
+  - In the conf_sql.json: `"password": "password"` input your own password
+  - In the conf_sql.json: `"user": "user"` input your own username
   
 
 ## Project Structure
