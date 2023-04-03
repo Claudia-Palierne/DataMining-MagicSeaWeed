@@ -40,13 +40,6 @@ TABLES['Beaches'] = (
     FOREIGN KEY (area_id) REFERENCES Areas(id)
     ) ENGINE=InnoDB""")
 
-TABLES['Weathers'] = (
-    """CREATE TABLE `Weathers` ( 
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `name` varchar(255) NOT NULL,
-    PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB""")
-
 TABLES['Conditions'] = (
     """CREATE TABLE `Conditions` ( 
     `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -64,12 +57,11 @@ TABLES['Conditions'] = (
     FOREIGN KEY (beach_id) REFERENCES Beaches(id)
     ) ENGINE=InnoDB""")
 
-# FOREIGN KEY (weather_id) REFERENCES Weathers(id)
-
 
 def create_database():
     """
-
+    This fonction will create a database in SQL.
+    :return: None
     """
     connection = mysql.connector.connect(
         host='localhost',
@@ -87,6 +79,10 @@ def create_database():
 
 
 def create_table():
+    """
+    This function will create the tables inside the database.
+    :return: None
+    """
     connection = mysql.connector.connect(
         host='localhost',
         user='root',
@@ -122,7 +118,8 @@ def create_table():
 
 def insert_countries():
     """
-
+    This function will insert the data inside the table Countries in SQL.
+    :return: None
     """
     cnx = mysql.connector.connect(
         host='localhost',
@@ -144,7 +141,10 @@ def insert_countries():
 
 def insert_areas(areas_links, country):
     """
-
+    This function will insert data inside the table Areas.
+    :param areas_links: a list of all the areas' urls.
+    :param country: a string with the country name.
+    :return: None
     """
     cnx = mysql.connector.connect(
         host='localhost',
@@ -159,7 +159,6 @@ def insert_areas(areas_links, country):
                         WHERE `name` = %s AND `url` = %s 
                             AND country_id = (SELECT id FROM Countries where Countries.name = %s));"""
     for url in areas_links:
-        #name = re.search(r'/([^/-]*)(-Surfing/)', url).group(1)
         name = url.split('/')[-3]
         area = (name, url, country)
         cursor.execute(add_area, area + area)
@@ -170,7 +169,9 @@ def insert_areas(areas_links, country):
 
 def insert_beaches(area_dict):
     """
-
+    This function will insert the data inside the table Beaches in SQL.
+    :param area_dict: a dictionary where the keys are the areas' name and the value are the beaches' urls.
+    :return: None
     """
     cnx = mysql.connector.connect(
         host='localhost',
@@ -197,7 +198,9 @@ def insert_beaches(area_dict):
 
 def insert_conditions(beach_info):
     """
-
+    This function will insert the data of one beach inside the table Conditions in SQL.
+    :param beach_info: a dictionnary of all the information for one beach.
+    :return: None
     """
     cnx = mysql.connector.connect(
         host='localhost',
@@ -227,5 +230,9 @@ def insert_conditions(beach_info):
 
 
 def initialize_db():
+    """
+    This function initialise the data base, in order to insert the scrapping data.
+    :return: None
+    """
     create_table()
     insert_countries()
