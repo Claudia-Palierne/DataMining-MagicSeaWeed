@@ -18,7 +18,7 @@ with open("conf_sql.json", "r") as jsonfile:
 
 TABLES = {}
 TABLES['Countries'] = (
-    """CREATE TABLE `Countries` ( 
+    """CREATE TABLE IF NOT EXISTS `Countries` ( 
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `name` varchar(14) NOT NULL,
     `url` varchar(255) NOT NULL,
@@ -26,7 +26,7 @@ TABLES['Countries'] = (
     ) ENGINE=InnoDB""")
 
 TABLES['Areas'] = (
-    """CREATE TABLE `Areas` ( 
+    """CREATE TABLE IF NOT EXISTS `Areas` ( 
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `name` varchar(255) NOT NULL,
     `url` varchar(255) NOT NULL,
@@ -36,7 +36,7 @@ TABLES['Areas'] = (
     ) ENGINE=InnoDB""")
 
 TABLES['Beaches'] = (
-    """CREATE TABLE `Beaches` ( 
+    """CREATE TABLE IF NOT EXISTS `Beaches` ( 
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `name` varchar(255) NOT NULL,
     `url` varchar(255) NOT NULL,
@@ -46,7 +46,7 @@ TABLES['Beaches'] = (
     ) ENGINE=InnoDB""")
 
 TABLES['Conditions'] = (
-    """CREATE TABLE `Conditions` ( 
+    """CREATE TABLE IF NOT EXISTS `Conditions` ( 
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `beach_id` int(11) NOT NULL,
     `timestamp` datetime NOT NULL,
@@ -63,6 +63,18 @@ TABLES['Conditions'] = (
     ) ENGINE=InnoDB""")
 
 
+def connect_to_db(database_selected=False):
+
+    database = SQL_CONFIG["DB_NAME"] if database_selected else None
+
+    connection = mysql.connector.connect(
+        host=SQL_CONFIG["HOST"],
+        user=SQL_CONFIG["USER"],
+        password=SQL_CONFIG["PASSWORD"],
+        database=database)
+
+    return connection
+
 
 def create_database():
     """
@@ -70,17 +82,20 @@ def create_database():
     :return: None
     """
 
-    connection = mysql.connector.connect(
-        host=SQL_CONFIG["HOST"],
-        user=SQL_CONFIG["USER"],
-        password=SQL_CONFIG["PASSWORD"])
+    connection = connect_to_db(database_selected=False)
     cursor = connection.cursor()
     # Create database and tables
     try:
+        print("Creating database {}: ".format(SQL_CONFIG['DB_NAME']), end='')
         cursor.execute(f"CREATE DATABASE {SQL_CONFIG['DB_NAME']} DEFAULT CHARACTER SET 'utf8'")
-    except mysql.connector.Error as error:
-        print(f"Failed creating database: {error}")
-        exit(1)
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_DB_CREATE_EXISTS:
+            print("Database already exists.")
+        else:
+            print(err.msg)
+            exit(1)
+    else:
+        print("OK")
     cursor.close()
     connection.close()
 
@@ -90,35 +105,14 @@ def create_table():
     This function will create the table inside the database.
     :return: None
     """
-    connection = mysql.connector.connect(
-        host=SQL_CONFIG["HOST"],
-        user=SQL_CONFIG["USER"],
-        password=SQL_CONFIG["PASSWORD"])
-
+    connection = connect_to_db(database_selected=False)
     cursor = connection.cursor()
-    try:
-        cursor.execute("USE {}".format(SQL_CONFIG['DB_NAME']))
-    except mysql.connector.Error as error:
-        print(f"Database {SQL_CONFIG['DB_NAME']} does not exists.")
-        if error.errno == errorcode.ER_BAD_DB_ERROR:
-            create_database()
-            print(f"Database {SQL_CONFIG['DB_NAME']} created successfully.")
-            connection.database = SQL_CONFIG['DB_NAME']
-        else:
-            print(error)
-            exit(1)
+
+    cursor.execute("USE {}".format(SQL_CONFIG['DB_NAME']))
     for table_name in TABLES.keys():
         table_description = TABLES.get(table_name)
-        try:
-            print("Creating table {}: ".format(table_name), end='')
-            cursor.execute(table_description)
-        except mysql.connector.Error as err:
-            if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
-                print("already exists.")
-            else:
-                print(err.msg)
-        else:
-            print("OK")
+        cursor.execute(table_description)
+
     cursor.close()
     connection.close()
 
@@ -128,12 +122,8 @@ def insert_countries():
     This function will insert the data inside the table Countries in SQL.
     :return: None
     """
-    cnx = mysql.connector.connect(
-        host=SQL_CONFIG["HOST"],
-        user=SQL_CONFIG["USER"],
-        password=SQL_CONFIG["PASSWORD"],
-        database=SQL_CONFIG['DB_NAME'])
-    cursor = cnx.cursor()
+    connection = connect_to_db(database_selected=True)
+    cursor = connection.cursor()
 
     add_country = """INSERT INTO Countries (`name`, `url`) 
                     SELECT %s, %s
@@ -144,9 +134,9 @@ def insert_countries():
         cursor.execute(add_country, country + country)
         print(f'{country} successfully inserted into db')
 
-    cnx.commit()
+    connection.commit()
     cursor.close()
-    cnx.close()
+    connection.close()
 
 
 def insert_areas(areas_links, country):
@@ -156,12 +146,8 @@ def insert_areas(areas_links, country):
     :param country: a string with the country name.
     :return: None
     """
-    cnx = mysql.connector.connect(
-        host=SQL_CONFIG["HOST"],
-        user=SQL_CONFIG["USER"],
-        password=SQL_CONFIG["PASSWORD"],
-        database=SQL_CONFIG['DB_NAME'])
-    cursor = cnx.cursor()
+    connection = connect_to_db(database_selected=True)
+    cursor = connection.cursor()
 
     add_area = """INSERT INTO Areas (`name`, `url`, `country_id`) 
                     SELECT %s, %s, (SELECT id FROM Countries where Countries.name = %s)
@@ -174,9 +160,10 @@ def insert_areas(areas_links, country):
         area = (name, url, country)
         cursor.execute(add_area, area + area)
         print(f'{area} successfully inserted into db')
-    cnx.commit()
+
+    connection.commit()
     cursor.close()
-    cnx.close()
+    connection.close()
 
 
 def insert_beaches(area_dict):
@@ -185,12 +172,9 @@ def insert_beaches(area_dict):
     :param area_dict: a dictionary where the keys are the areas' name and the value are the beaches' urls.
     :return: None
     """
-    cnx = mysql.connector.connect(
-        host=SQL_CONFIG["HOST"],
-        user=SQL_CONFIG["USER"],
-        password=SQL_CONFIG["PASSWORD"],
-        database=SQL_CONFIG['DB_NAME'])
-    cursor = cnx.cursor()
+    connection = connect_to_db(database_selected=True)
+    cursor = connection.cursor()
+
     add_beach = """INSERT INTO Beaches (`name`, `url`, `area_id`) 
                         SELECT %s, %s, (SELECT id FROM Areas where Areas.name = %s)
                         WHERE NOT EXISTS (
@@ -204,9 +188,10 @@ def insert_beaches(area_dict):
             beach = (beach_name, beach_url, area_name)
             cursor.execute(add_beach, beach + beach)
             print(f'{beach_name} successfully inserted into db')
-    cnx.commit()
+
+    connection.commit()
     cursor.close()
-    cnx.close()
+    connection.close()
 
 
 def insert_conditions(beach_info):
@@ -215,12 +200,8 @@ def insert_conditions(beach_info):
     :param beach_info: a dictionary of all the information for one beach.
     :return: None
     """
-    cnx = mysql.connector.connect(
-        host=SQL_CONFIG["HOST"],
-        user=SQL_CONFIG["USER"],
-        password=SQL_CONFIG["PASSWORD"],
-        database=SQL_CONFIG['DB_NAME'])
-    cursor = cnx.cursor()
+    connection = connect_to_db(database_selected=True)
+    cursor = connection.cursor()
 
     add_condition = """INSERT INTO Conditions (`beach_id`, `timestamp`, `weather`, `wave_height_min(m)`, 
                     `wave_height_max(m)`, `temperature(C)`, `steady_wind_speed(kph)`, `gust_wind_speed(kph)`, 
@@ -238,9 +219,10 @@ def insert_conditions(beach_info):
                      beach_info['surfability'][i], beach_info['direction'][i])
         cursor.execute(add_condition, condition + (beach_info['url'], beach_info['timestamp'][i]))
         print(f'{time} successfully inserted into db')
-    cnx.commit()
+
+    connection.commit()
     cursor.close()
-    cnx.close()
+    connection.close()
 
 
 def initialize_db():
@@ -248,5 +230,6 @@ def initialize_db():
     This function initialise the database, in order to insert the scrapping data.
     :return: None
     """
+    create_database()
     create_table()
     insert_countries()
