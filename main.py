@@ -31,17 +31,10 @@ def main():
         print(f'{country}: url extraction successful')
         areas_urls = url_extraction.extract_areas_urls(country_forecast_urls)
         print(f'{country}: areas url extraction successful')
-        area_dict = {}
-        beaches_url = []
 
-        for url in areas_urls:
-            area_name = url.split('/')[CONFIG['IDX_AREA_NAME']]
-            beach_per_area_url = url_extraction.extract_beaches_urls([url])
+        area_dict, beaches_url = franchement_0_inspi(areas_urls, country)
 
-            print(f'{country}: {area_name}: beaches urls extraction successful')
-            area_dict[area_name] = beach_per_area_url
-            beaches_url += beach_per_area_url
-
+        # we should only use area dict and no more beaches url, but that's not for today mamen
         beaches_soup = url_extraction.get_soup(beaches_url)
 
         if execution_mode == 'database':
@@ -50,6 +43,20 @@ def main():
             database.insert_beaches(area_dict)
 
         execute(execution_mode, beaches_soup)
+
+
+def franchement_0_inspi(areas_urls, country):
+    area_dict = {}
+    beaches_url = []
+    for url in areas_urls:
+        area_name = url.split('/')[CONFIG['IDX_AREA_NAME']]
+        beach_per_area_url = url_extraction.extract_beaches_urls([url])
+
+        print(f'{country}: {area_name}: beaches urls extraction successful')
+        area_dict[area_name] = beach_per_area_url
+        beaches_url += beach_per_area_url
+
+    return area_dict, beaches_url
 
 
 def execute(mode, beaches_soup):
