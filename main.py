@@ -15,21 +15,8 @@ def main():
     :return: None
     """
 
-    parser = argparse.ArgumentParser()
-    # Gets the country input by user
-    parser.add_argument("-country", type=str, choices=['ALL', 'ISRAEL', 'FRANCE', 'HAWAII'],
-                        default='ISRAEL',
-                        help="choose a country from the list to scrap")
+    args = create_parser()
 
-    # Get the execution mode
-    parser.add_argument("-mode", type=str, choices=['print', 'database'],
-                        default='print',
-                        help="choose a mode of execution :"
-                             "print will print the information in the std output"
-                             "whereas database will store it in the db")
-
-    # Using parser to further use the arguments
-    args = parser.parse_args()
     country_to_scrap = args.country
     execution_mode = args.mode
 
@@ -46,6 +33,7 @@ def main():
         print(f'{country}: areas url extraction successful')
         area_dict = {}
         beaches_url = []
+
         for url in areas_urls:
             area_name = url.split('/')[CONFIG['IDX_AREA_NAME']]
             beach_per_area_url = url_extraction.extract_beaches_urls([url])
@@ -56,6 +44,7 @@ def main():
 
         # Execution mode
         if execution_mode == 'print':
+
             beaches_soup = url_extraction.get_soup(beaches_url)
             for bs in beaches_soup:
                 beach_data = one_beach_scrapping.beach_historic(bs)
@@ -70,6 +59,25 @@ def main():
             for bs in beaches_soup:
                 beach_data = one_beach_scrapping.beach_historic(bs)
                 database.insert_conditions(beach_data)
+
+
+def create_parser():
+
+    parser = argparse.ArgumentParser()
+    # Gets the country input by user
+    parser.add_argument("-country", type=str, choices=['ALL', 'ISRAEL', 'FRANCE', 'HAWAII'],
+                        default='ISRAEL',
+                        help="choose a country from the list to scrap")
+
+    # Get the execution mode
+    parser.add_argument("-mode", type=str, choices=['print', 'database'],
+                        default='print',
+                        help="choose a mode of execution :"
+                             "print will print the information in the std output"
+                             "whereas database will store it in the db")
+
+    # Using parser to further use the arguments
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
