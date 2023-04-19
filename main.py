@@ -32,7 +32,7 @@ def main():
         areas_urls = url_extraction.extract_areas_urls(country_forecast_urls)
         print(f'{country}: areas url extraction successful')
 
-        area_dict, beaches_url = franchement_0_inspi(areas_urls, country)
+        area_dict, beaches_url = build_area_dict(areas_urls, country)
 
         # we should only use area dict and no more beaches url, but that's not for today mamen
         beaches_soup = url_extraction.get_soup(beaches_url)
@@ -45,7 +45,7 @@ def main():
         execute(execution_mode, beaches_soup)
 
 
-def franchement_0_inspi(areas_urls, country):
+def build_area_dict(areas_urls, country):
     area_dict = {}
     beaches_url = []
     for url in areas_urls:
