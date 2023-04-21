@@ -1,6 +1,6 @@
 {
   "HOST": "localhost",
-  "USER": "user",
-  "PASSWORD": "password",
+  "USER": "root",
+  "PASSWORD": "root1995",
   "DB_NAME": "MagicSeaWeed"
 }

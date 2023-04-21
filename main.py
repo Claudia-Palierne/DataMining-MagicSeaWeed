@@ -31,34 +31,43 @@ def main():
         print(f'{country}: url extraction successful')
         areas_urls = url_extraction.extract_areas_urls(country_forecast_urls)
         print(f'{country}: areas url extraction successful')
-        area_dict = {}
-        beaches_url = []
 
-        for url in areas_urls:
-            area_name = url.split('/')[CONFIG['IDX_AREA_NAME']]
-            beach_per_area_url = url_extraction.extract_beaches_urls([url])
+        area_dict, beaches_url = build_area_dict(areas_urls, country)
 
-            print(f'{country}: {area_name}: beaches urls extraction successful')
-            area_dict[area_name] = beach_per_area_url
-            beaches_url += beach_per_area_url
+        # we should only use area dict and no more beaches url, but that's not for today mamen
+        beaches_soup = url_extraction.get_soup(beaches_url)
 
-        # Execution mode
-        if execution_mode == 'print':
-
-            beaches_soup = url_extraction.get_soup(beaches_url)
-            for bs in beaches_soup:
-                beach_data = one_beach_scrapping.beach_historic(bs)
-                one_beach_scrapping.print_beach_info(beach_data)
-
-        else:
+        if execution_mode == 'database':
             database.initialize_db() if idx == 0 else None
             database.insert_areas(areas_urls, country)
             database.insert_beaches(area_dict)
 
-            beaches_soup = url_extraction.get_soup(beaches_url)
-            for bs in beaches_soup:
-                beach_data = one_beach_scrapping.beach_historic(bs)
-                database.insert_conditions(beach_data)
+        execute(execution_mode, beaches_soup)
+
+
+def build_area_dict(areas_urls, country):
+    area_dict = {}
+    beaches_url = []
+    for url in areas_urls:
+        area_name = url.split('/')[CONFIG['IDX_AREA_NAME']]
+        beach_per_area_url = url_extraction.extract_beaches_urls([url])
+
+        print(f'{country}: {area_name}: beaches urls extraction successful')
+        area_dict[area_name] = beach_per_area_url
+        beaches_url += beach_per_area_url
+
+    return area_dict, beaches_url
+
+
+def execute(mode, beaches_soup):
+
+    # Execution mode
+    for bs in beaches_soup:
+        beach_data = one_beach_scrapping.beach_historic(bs)
+        if mode == 'print':
+            one_beach_scrapping.print_beach_info(beach_data)
+        else:
+            database.insert_conditions(beach_data)
 
 
 def create_parser():
