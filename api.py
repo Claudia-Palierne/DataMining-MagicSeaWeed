@@ -1,142 +1,116 @@
 import requests
 import json
+import datetime
 
-area_dict_israel = {'Central-Tel-Aviv-Surfing': ['https://magicseaweed.com/Argamans-Beach-Surf-Report/4932/Historic/', 'https://magicseaweed.com/Bat-Yam-Surf-Report/3662/Historic/', 'https://magicseaweed.com/Beit-Yanai-Surf-Report/3783/Historic/', 'https://magicseaweed.com/Dolphinarium-Surf-Report/3660/Historic/', 'https://magicseaweed.com/Dromi-Herzlyia-Marina-Surf-Report/4744/Historic/', 'https://magicseaweed.com/Gazebbo-Beach-Club-Surf-Report/3980/Historic/', 'https://magicseaweed.com/Gordon-Beach-Surf-Report/8019/Historic/', 'https://magicseaweed.com/Ha-Rama-Beach-Surf-Report/5538/Historic/', 'https://magicseaweed.com/Hazuk-Beach-Surf-Report/3659/Historic/', 'https://magicseaweed.com/Hilton-Surf-Report/3658/Historic/', 'https://magicseaweed.com/Hof-Maravi-Surf-Report/3663/Historic/', 'https://magicseaweed.com/Marina-Herzelia-Surf-Report/3979/Historic/', 'https://magicseaweed.com/Netanya-Surf-Report/4558/Historic/', 'https://magicseaweed.com/Palmahim-Surf-Report/3975/Historic/', 'https://magicseaweed.com/Poleg-Beach-Surf-Report/5539/Historic/', 'https://magicseaweed.com/Rishon-Lezion-Surf-Report/3976/Historic/', 'https://magicseaweed.com/Sidna-Ali-Surf-Report/3986/Historic/', 'https://magicseaweed.com/Sironit-Beach-Surf-Report/4933/Historic/', 'https://magicseaweed.com/Tel-Baruch-North-Surf-Report/3978/Historic/', 'https://magicseaweed.com/Topsea-Surf-Report/3661/Historic/', 'https://magicseaweed.com/Zvulun-Herzelia-Surf-Report/3981/Historic/'],
-             'Southern-Surfing': ['https://magicseaweed.com/Ashdod-Surf-Report/4219/Historic/', 'https://magicseaweed.com/Ashqelon-Surf-Report/3811/Historic/', 'https://magicseaweed.com/Foxes-Point-Surf-Report/7992/Historic/', 'https://magicseaweed.com/Gute-Beach-Surf-Report/4732/Historic/', 'https://magicseaweed.com/Nachal-Yarkon-St-Surf-Report/5540/Historic/', 'https://magicseaweed.com/Zikim-Surf-Report/3977/Historic/'],
-             'Haifa-Surfing': ['https://magicseaweed.com/Achziv-Beach-Surf-Report/8990/Historic/', 'https://magicseaweed.com/Argaman-Beach-Surf-Report/6794/Historic/', 'https://magicseaweed.com/Atlit-Beach-Surf-Report/6795/Historic/', 'https://magicseaweed.com/Backdoor-Haifa-Surf-Report/3987/Historic/', 'https://magicseaweed.com/Betset-Surf-Report/4738/Historic/', 'https://magicseaweed.com/Caesarea-Surf-Report/3983/Historic/', 'https://magicseaweed.com/Haifa-The-Peak-Surf-Report/3671/Historic/', 'https://magicseaweed.com/Jisr-az-zarqa-Surf-Report/4934/Historic/', 'https://magicseaweed.com/Kadarim-Surf-Report/4866/Historic/', 'https://magicseaweed.com/Kiriat-Yam-Surf-Report/4753/Historic/', 'https://magicseaweed.com/Maagan-Michael-Surf-Report/3984/Historic/', 'https://magicseaweed.com/Nahsholim-Surf-Report/4880/Historic/', 'https://magicseaweed.com/Neve-Yam-Beach-Surf-Report/4935/Historic/', 'https://magicseaweed.com/Nirvana-Beach-Surf-Report/8282/Historic/', 'https://magicseaweed.com/Olga-Beach-Surf-Report/7913/Historic/', 'https://magicseaweed.com/Sdot-Yam-Surf-Report/3982/Historic/', 'https://magicseaweed.com/Shavei-Tzion-Surf-Report/8991/Historic/', 'https://magicseaweed.com/Sokolov-Beach-Surf-Report/4640/Historic/'],
-             'Red-Sea-Surfing': ['https://magicseaweed.com/Eilat-Surf-Report/8268/Historic/', 'https://magicseaweed.com/Sharm-El-Sheikh-Surf-Report/8274/Historic/']}
-
-area_dict_france = {'The-Channel-Surfing': ['https://magicseaweed.com/Calais-Surf-Report/3985/Historic/', 'https://magicseaweed.com/Cap-Gris-Nez-Surf-Report/3990/Historic/', 'https://magicseaweed.com/Collignon-Surf-Report/1592/Historic/', 'https://magicseaweed.com/Corblets-Bay-Surf-Report/3678/Historic/', 'https://magicseaweed.com/Dielette-Surf-Report/1548/Historic/', 'https://magicseaweed.com/Etretat-Surf-Report/80/Historic/', 'https://magicseaweed.com/Gold-Beach-Surf-Report/5567/Historic/', 'https://magicseaweed.com/Hatainville-Surf-Report/1594/Historic/', 'https://magicseaweed.com/LAnse-du-Brick-Surf-Report/1593/Historic/', 'https://magicseaweed.com/Le-Rozel-Surf-Report/79/Historic/', 'https://magicseaweed.com/Luc-sur-Mer-Surf-Report/5552/Historic/', 'https://magicseaweed.com/Mondree-Surf-Report/5999/Historic/', 'https://magicseaweed.com/Omaha-Beach-Surf-Report/5553/Historic/', 'https://magicseaweed.com/Petites-Dalles-Surf-Report/1590/Historic/', 'https://magicseaweed.com/Plage-de-Bretteville-Surf-Report/5998/Historic/', 'https://magicseaweed.com/Plage-de-Fort-Mahon-Surf-Report/5947/Historic/', 'https://magicseaweed.com/Plage-des-Bains-Surf-Report/5942/Historic/', 'https://magicseaweed.com/Platte-Saline-Surf-Report/5766/Historic/', 'https://magicseaweed.com/Pourville-sur-Mer-Surf-Report/9364/Historic/', 'https://magicseaweed.com/Sainte-Adresse-Surf-Report/1580/Historic/', 'https://magicseaweed.com/Siouville-Surf-Report/1547/Historic/', 'https://magicseaweed.com/Surtainville-Surf-Report/4261/Historic/', 'https://magicseaweed.com/Trouville-Surf-Report/1176/Historic/', 'https://magicseaweed.com/Utah-Beach-Surf-Report/5554/Historic/', 'https://magicseaweed.com/Vaucottes-Surf-Report/1588/Historic/', 'https://magicseaweed.com/Wimereux-Surf-Report/3991/Historic/', 'https://magicseaweed.com/Yport-Surf-Report/1589/Historic/'],
-                    'Brittany-North-Surfing': ['https://magicseaweed.com/Blancs-Sablons-Surf-Report/74/Historic/', 'https://magicseaweed.com/Boutrouilles-Surf-Report/1591/Historic/', 'https://magicseaweed.com/Cap-Frehel-Surf-Report/1579/Historic/', 'https://magicseaweed.com/Dalbosc-Surf-Report/1519/Historic/', 'https://magicseaweed.com/La-Mauvaise-Greve-Surf-Report/1546/Historic/', 'https://magicseaweed.com/Lampaul-Ploudalmezeau-Surf-Report/75/Historic/', 'https://magicseaweed.com/Le-Dossen-Surf-Report/76/Historic/', 'https://magicseaweed.com/Le-Gouerou-Surf-Report/1585/Historic/', 'https://magicseaweed.com/Le-Petit-Minou-Surf-Report/1520/Historic/', 'https://magicseaweed.com/Les-Amiets-Surf-Report/4646/Historic/', 'https://magicseaweed.com/Les-Longchamps-Surf-Report/1578/Historic/', 'https://magicseaweed.com/Mont-Saint-Michel-Surf-Report/6077/Historic/', 'https://magicseaweed.com/Penfoul-Surf-Report/1545/Historic/', 'https://magicseaweed.com/Plage-du-Sillon-St-Malo-Surf-Report/78/Historic/', 'https://magicseaweed.com/Plage-du-Trez-Hir-Surf-Report/5898/Historic/', 'https://magicseaweed.com/Pors-Ar-Villec-Locquirec-Surf-Report/126/Historic/', 'https://magicseaweed.com/Porsmilin-Surf-Report/1518/Historic/', 'https://magicseaweed.com/Selune-River-Surf-Report/7880/Historic/', 'https://magicseaweed.com/St-Pabu-Surf-Report/1544/Historic/', 'https://magicseaweed.com/Trestel-Surf-Report/8006/Historic/', 'https://magicseaweed.com/Trestraou-Surf-Report/77/Historic/'],
-                    'Finistere-South-Surfing': ['https://magicseaweed.com/Anse-de-Pen-hat-Surf-Report/1521/Historic/', 'https://magicseaweed.com/Baie-des-Trepasses-Lescoff-Surf-Report/73/Historic/', 'https://magicseaweed.com/Cap-de-la-Chevre-Surf-Report/1523/Historic/', 'https://magicseaweed.com/Fouesnou-Surf-Report/1170/Historic/', 'https://magicseaweed.com/Gwendrez-Surf-Report/1530/Historic/', 'https://magicseaweed.com/Kerloch-Surf-Report/1586/Historic/', 'https://magicseaweed.com/La-Gamelle-Surf-Report/1577/Historic/', 'https://magicseaweed.com/La-Palue-Surf-Report/1524/Historic/', 'https://magicseaweed.com/La-Torche-Surf-Report/72/Historic/', 'https://magicseaweed.com/Les-Roches-Blanches-Pointe-Leyde-Surf-Report/1171/Historic/', 'https://magicseaweed.com/Lesconil-Surf-Report/1534/Historic/', 'https://magicseaweed.com/Pointe-de-Dinan-Surf-Report/1587/Historic/', 'https://magicseaweed.com/Pointe-de-Lervily-Surf-Report/1576/Historic/', 'https://magicseaweed.com/Pors-ar-Vag-Surf-Report/1522/Historic/', 'https://magicseaweed.com/Porz-Theolen-Surf-Report/1574/Historic/', 'https://magicseaweed.com/Porzcarn-Surf-Report/1533/Historic/', 'https://magicseaweed.com/Saint-Tugen-Surf-Report/1575/Historic/'],
-                    'Morbihan-Loire-Atlantique-Surfing': ['https://magicseaweed.com/Etel-Surf-Report/1561/Historic/', 'https://magicseaweed.com/Gavres-Surf-Report/1560/Historic/', 'https://magicseaweed.com/Guidel-Les-Kaolins-Surf-Report/71/Historic/', 'https://magicseaweed.com/Kerguelen-Surf-Report/6000/Historic/', 'https://magicseaweed.com/La-Cote-Sauvage-Surf-Report/1556/Historic/', 'https://magicseaweed.com/Le-Kerou-Surf-Report/1558/Historic/', 'https://magicseaweed.com/Les-Donnants-Surf-Report/70/Historic/', 'https://magicseaweed.com/Penthievre-Surf-Report/4412/Historic/', 'https://magicseaweed.com/Plage-DHerlin-Surf-Report/6007/Historic/', 'https://magicseaweed.com/Plage-de-Carnac-Surf-Report/5948/Historic/', 'https://magicseaweed.com/Plage-de-Sables-Blancs-Surf-Report/6008/Historic/', 'https://magicseaweed.com/Plage-des-Grands-Sables-Surf-Report/5749/Historic/', 'https://magicseaweed.com/Plage-du-Loch-Surf-Report/1557/Historic/', 'https://magicseaweed.com/Toulhars-Surf-Report/1559/Historic/'],
-                    'Vendee-Surfing': ['https://magicseaweed.com/Cantin-Surf-Report/8334/Historic/', 'https://magicseaweed.com/Gohaud-Surf-Report/4409/Historic/', 'https://magicseaweed.com/LAubraie-Surf-Report/69/Historic/', 'https://magicseaweed.com/LErmitage-Surf-Report/4410/Historic/', 'https://magicseaweed.com/La-Courance-Surf-Report/4411/Historic/', 'https://magicseaweed.com/La-Pointe-du-Grignon-Surf-Report/9322/Historic/', 'https://magicseaweed.com/La-Sauzaie-Surf-Report/1571/Historic/', 'https://magicseaweed.com/Le-Lizay-Surf-Report/4320/Historic/', 'https://magicseaweed.com/Les-Conches-Bud-Bud-Surf-Report/1573/Historic/', 'https://magicseaweed.com/Les-Dunes-Surf-Report/1570/Historic/', 'https://magicseaweed.com/Les-Sables-dOlonne-Surf-Report/4677/Historic/', 'https://magicseaweed.com/Noirmoutier-Surf-Report/4406/Historic/', 'https://magicseaweed.com/Plage-de-la-Baule-Surf-Report/6010/Historic/', 'https://magicseaweed.com/Pointe-de-lEve-Surf-Report/6009/Historic/', 'https://magicseaweed.com/Sablanceaux-Nord-Surf-Report/6002/Historic/', 'https://magicseaweed.com/Sable-Rouis-Surf-Report/8335/Historic/', 'https://magicseaweed.com/Saint-Gilles-Croix-de-Vie-Surf-Report/1572/Historic/', 'https://magicseaweed.com/Saint-Nicolas-Surf-Report/1569/Historic/', 'https://magicseaweed.com/Sauveterre-Surf-Report/1568/Historic/', 'https://magicseaweed.com/St-jean-de-monts-Surf-Report/4407/Historic/'],
-                    'Charente-Maritime-Surfing': ['https://magicseaweed.com/Aytre-Surf-Report/6005/Historic/', 'https://magicseaweed.com/Chassiron-Surf-Report/68/Historic/', 'https://magicseaweed.com/Gouillaud-Surf-Report/4319/Historic/', 'https://magicseaweed.com/La-Cote-Sauvage-Surf-Report/4404/Historic/', 'https://magicseaweed.com/La-Flotte-Surf-Report/6006/Historic/', 'https://magicseaweed.com/La-Grande-Cote-Surf-Report/5992/Historic/', 'https://magicseaweed.com/Les-Allassins-Surf-Report/4405/Historic/', 'https://magicseaweed.com/Les-Boulassiers-Surf-Report/1549/Historic/', 'https://magicseaweed.com/Les-Huttes-Surf-Report/1550/Historic/', 'https://magicseaweed.com/Plage-des-Sables-Vigniers-Surf-Report/6048/Historic/', 'https://magicseaweed.com/Pontaillac-Surf-Report/1567/Historic/', 'https://magicseaweed.com/Sablanceaux-Sud-Surf-Report/6003/Historic/', 'https://magicseaweed.com/St-Denis-Surf-Report/1552/Historic/', 'https://magicseaweed.com/St-Trojan-Surf-Report/1551/Historic/'],
-                    'Gironde-Surfing': ['https://magicseaweed.com/Barzan-Plage-Surf-Report/5990/Historic/', 'https://magicseaweed.com/Carcans-Surf-Report/1535/Historic/', 'https://magicseaweed.com/Hourtin-Surf-Report/1229/Historic/', 'https://magicseaweed.com/LAmelie-Surf-Report/1563/Historic/', 'https://magicseaweed.com/LHorizon-Surf-Report/1517/Historic/', 'https://magicseaweed.com/La-Jenny-Surf-Report/1537/Historic/', 'https://magicseaweed.com/La-Pointe-Surf-Report/1582/Historic/', 'https://magicseaweed.com/Lacanau-Surf-Report/66/Historic/', 'https://magicseaweed.com/Le-Crohot-des-Cavales-Surf-Report/1538/Historic/', 'https://magicseaweed.com/Le-Grand-Crohot-Surf-Report/1584/Historic/', 'https://magicseaweed.com/Le-Gurp-Surf-Report/1565/Historic/', 'https://magicseaweed.com/Le-Pin-Sec-Surf-Report/1562/Historic/', 'https://magicseaweed.com/Le-Porge-Surf-Report/1536/Historic/', 'https://magicseaweed.com/Le-Truc-Vert-Surf-Report/1583/Historic/', 'https://magicseaweed.com/Le-Verdon-Surf-Report/1564/Historic/', 'https://magicseaweed.com/Montalivet-Surf-Report/1566/Historic/', 'https://magicseaweed.com/Plage-des-Nonnes-Surf-Report/5991/Historic/', 'https://magicseaweed.com/Soulac-Surf-Report/67/Historic/'],
-                    'Landes-Surfing': ['https://magicseaweed.com/Biscarrosse-Plage-Surf-Report/65/Historic/', 'https://magicseaweed.com/Cap-de-LHomy-Surf-Report/885/Historic/', 'https://magicseaweed.com/Contis-Plage-Surf-Report/884/Historic/', 'https://magicseaweed.com/La-Salie-Surf-Report/4403/Historic/', 'https://magicseaweed.com/Labenne-Ocean-Surf-Report/1555/Historic/', 'https://magicseaweed.com/Lespecier-Surf-Report/1525/Historic/', 'https://magicseaweed.com/Messanges-Surf-Report/3669/Historic/', 'https://magicseaweed.com/Mimizan-Plage-Surf-Report/63/Historic/', 'https://magicseaweed.com/Moliets-Plage-Surf-Report/887/Historic/', 'https://magicseaweed.com/Ondres-Plage-Surf-Report/888/Historic/', 'https://magicseaweed.com/St-Girons-Plage-Surf-Report/886/Historic/', 'https://magicseaweed.com/Tarnos-Surf-Report/1554/Historic/', 'https://magicseaweed.com/Vieux-Boucau-Surf-Report/64/Historic/'],
-                    'Hossegor-Surfing': ['https://magicseaweed.com/Capbreton-La-Piste-VVF-Surf-Report/883/Historic/', 'https://magicseaweed.com/Casernes-Surf-Report/1175/Historic/', 'https://magicseaweed.com/Hossegor-La-Graviere-Surf-Report/61/Historic/', 'https://magicseaweed.com/Hossegor-La-Nord-Surf-Report/891/Historic/', 'https://magicseaweed.com/Hossegor-La-Sud-Surf-Report/1531/Historic/', 'https://magicseaweed.com/LEstacade-Surf-Report/1528/Historic/', 'https://magicseaweed.com/Le-Penon-Surf-Report/1529/Historic/', 'https://magicseaweed.com/Le-Prevent-Surf-Report/1527/Historic/', 'https://magicseaweed.com/Le-Santocha-Surf-Report/1526/Historic/', 'https://magicseaweed.com/Les-Bourdaines-Surf-Report/1532/Historic/', 'https://magicseaweed.com/Les-Culs-Nus-Surf-Report/889/Historic/', 'https://magicseaweed.com/Les-Estagnots-Surf-Report/890/Historic/'],
-                    'Biarritz-Anglet-Surfing': ['https://magicseaweed.com/Biarritz-Grande-Plage-Surf-Report/62/Historic/', 'https://magicseaweed.com/Cote-des-Basques-Surf-Report/894/Historic/', 'https://magicseaweed.com/Guethary-Surf-Report/896/Historic/', 'https://magicseaweed.com/Ilbarritz-Surf-Report/895/Historic/', 'https://magicseaweed.com/La-Barre-Surf-Report/1553/Historic/', 'https://magicseaweed.com/La-Madrague-Surf-Report/1510/Historic/', 'https://magicseaweed.com/Lafitenia-Surf-Report/897/Historic/', 'https://magicseaweed.com/Le-Club-Surf-Report/1506/Historic/', 'https://magicseaweed.com/Le-VVF-Surf-Report/1507/Historic/', 'https://magicseaweed.com/Les-Cavaliers-Surf-Report/892/Historic/', 'https://magicseaweed.com/Les-Corsaires-Surf-Report/1509/Historic/', 'https://magicseaweed.com/Marinella-Surf-Report/1508/Historic/', 'https://magicseaweed.com/Sables-dOr-Surf-Report/893/Historic/'],
-                    'La-Cote-Basque-Surfing': ['https://magicseaweed.com/Belharra-Perdun-Surf-Report/1543/Historic/', 'https://magicseaweed.com/Bidart-Surf-Report/1540/Historic/', 'https://magicseaweed.com/Ciboure-Socoa-Surf-Report/1542/Historic/', 'https://magicseaweed.com/Erretegia-Surf-Report/1511/Historic/', 'https://magicseaweed.com/Erromardie-Surf-Report/1539/Historic/', 'https://magicseaweed.com/Guethary-Avalanche-Surf-Report/1512/Historic/', 'https://magicseaweed.com/Hendaye-Plage-Surf-Report/1581/Historic/', 'https://magicseaweed.com/Les-Alcyons-Surf-Report/1513/Historic/', 'https://magicseaweed.com/Parlementia-Surf-Report/1515/Historic/', 'https://magicseaweed.com/Sainte-Barbe-Surf-Report/1541/Historic/'],
-                    'Mediterranean-France-West-Surfing': ['https://magicseaweed.com/Bandol-Surf-Report/3523/Historic/', 'https://magicseaweed.com/Calanque-de-Figuiere-Surf-Report/8259/Historic/', 'https://magicseaweed.com/Canet-Plage-Surf-Report/3511/Historic/', 'https://magicseaweed.com/Cap-Saint-Louis-Surf-Report/3522/Historic/', 'https://magicseaweed.com/Carnon-Surf-Report/3514/Historic/', 'https://magicseaweed.com/Cassis-Surf-Report/3520/Historic/', 'https://magicseaweed.com/Gruissan-Surf-Report/3398/Historic/', 'https://magicseaweed.com/La-Ciotat-Surf-Report/3521/Historic/', 'https://magicseaweed.com/La-Corniche-Surf-Report/3517/Historic/', 'https://magicseaweed.com/La-Coudouliere-Surf-Report/3524/Historic/', 'https://magicseaweed.com/La-Couronne-Surf-Report/3516/Historic/', 'https://magicseaweed.com/Le-Prado-Surf-Report/3519/Historic/', 'https://magicseaweed.com/Le-Rouet-Surf-Report/3518/Historic/', 'https://magicseaweed.com/Les-Sablettes-Surf-Report/3525/Historic/', 'https://magicseaweed.com/Palavas-les-Flots-Surf-Report/3513/Historic/', 'https://magicseaweed.com/Pin-Rolland-Surf-Report/3526/Historic/', 'https://magicseaweed.com/Platja-de-Grifeu-Surf-Report/6031/Historic/', 'https://magicseaweed.com/Platja-de-Perafita-Surf-Report/5899/Historic/', 'https://magicseaweed.com/Playa-de-Garbet-Surf-Report/5981/Historic/', 'https://magicseaweed.com/Saintes-Maries-Surf-Report/3515/Historic/', 'https://magicseaweed.com/Sete-Surf-Report/3512/Historic/'], 'Southern-France-East-Surfing': ['https://magicseaweed.com/Algajola-Surf-Report/3503/Historic/', 'https://magicseaweed.com/Beauvallon-Surf-Report/3495/Historic/', 'https://magicseaweed.com/Cannes-Surf-Report/3397/Historic/', 'https://magicseaweed.com/Capo-di-Feno-Surf-Report/3506/Historic/', 'https://magicseaweed.com/Cipiniellu-Surf-Report/6020/Historic/', 'https://magicseaweed.com/Esclamandes-Surf-Report/5994/Historic/', 'https://magicseaweed.com/Eze-Surf-Report/3500/Historic/', 'https://magicseaweed.com/Farinole-Surf-Report/3501/Historic/', 'https://magicseaweed.com/Figari-Surf-Report/3509/Historic/', 'https://magicseaweed.com/Frejus-Surf-Report/5995/Historic/', 'https://magicseaweed.com/Galiote-Surf-Report/3496/Historic/', 'https://magicseaweed.com/Gigaro-Surf-Report/3494/Historic/', 'https://magicseaweed.com/La-Tour-Surf-Report/3497/Historic/', 'https://magicseaweed.com/Le-Ruppione-Surf-Report/3508/Historic/', 'https://magicseaweed.com/Lumio-Surf-Report/3504/Historic/', 'https://magicseaweed.com/Ostriconi-Surf-Report/3502/Historic/', 'https://magicseaweed.com/Pinarellu-Surf-Report/3510/Historic/', 'https://magicseaweed.com/Plage-Bussaglia-Surf-Report/6080/Historic/', 'https://magicseaweed.com/Plage-dAgosta-Surf-Report/5946/Historic/', 'https://magicseaweed.com/Plage-de-Boulouris-Surf-Report/5996/Historic/', 'https://magicseaweed.com/Plage-de-Carataggio-Surf-Report/5752/Historic/', 'https://magicseaweed.com/Plage-de-Cupabia-Surf-Report/6015/Historic/', 'https://magicseaweed.com/Plage-de-Furiani-Surf-Report/6012/Historic/', 'https://magicseaweed.com/Plage-de-Laurosu-Surf-Report/6018/Historic/', 'https://magicseaweed.com/Plage-de-Porraja-Surf-Report/6019/Historic/', 'https://magicseaweed.com/Plage-de-Vetricella-Surf-Report/6021/Historic/', 'https://magicseaweed.com/Plage-du-Grand-Boucharel-Surf-Report/5993/Historic/', 'https://magicseaweed.com/Plage-du-Larvotto-Surf-Report/5597/Historic/', 'https://magicseaweed.com/Plage-du-Ricanto-Surf-Report/6017/Historic/', 'https://magicseaweed.com/Plage-Du-Trottel-Surf-Report/6016/Historic/', 'https://magicseaweed.com/Plage-Veillat-Surf-Report/5738/Historic/', 'https://magicseaweed.com/Route-des-Sanguinaires-Surf-Report/3507/Historic/', 'https://magicseaweed.com/Sagone-Surf-Report/3505/Historic/', 'https://magicseaweed.com/St-Laurent-du-Var-Surf-Report/3498/Historic/', 'https://magicseaweed.com/Villefranche-Sur-Mer-Surf-Report/3499/Historic/']}
-
-area_dict_hawaii = {'Big-Island-Surfing': ['https://magicseaweed.com/Banyans-Surf-Report/2784/Historic/', 'https://magicseaweed.com/Hapuna-Pt-Surf-Report/1246/Historic/', 'https://magicseaweed.com/Honls-Surf-Report/9032/Historic/', 'https://magicseaweed.com/Honokohau-Beach-Surf-Report/9284/Historic/', 'https://magicseaweed.com/Honolii-Surf-Report/3815/Historic/', 'https://magicseaweed.com/Kahaluu-Surf-Report/1247/Historic/', 'https://magicseaweed.com/Kawaihae-Breakwater-Surf-Report/2783/Historic/', 'https://magicseaweed.com/Lymans-Surf-Report/9033/Historic/', 'https://magicseaweed.com/Magics-Surf-Report/3957/Historic/', 'https://magicseaweed.com/Pine-Trees-Surf-Report/3958/Historic/', 'https://magicseaweed.com/Pohoiki-Surf-Report/3814/Historic/', 'https://magicseaweed.com/Pohue-Bay-Beach-Surf-Report/5877/Historic/'],
-                    'Kauai-Surfing': ['https://magicseaweed.com/Anahola-Bay-Surf-Report/4817/Historic/', 'https://magicseaweed.com/HaEna-Bay-Surf-Report/4816/Historic/', 'https://magicseaweed.com/Hanalei-Bay-Surf-Report/3051/Historic/', 'https://magicseaweed.com/Kalapaki-Beach-Surf-Report/8119/Historic/', 'https://magicseaweed.com/Kauapea-Beach-Surf-Report/5873/Historic/', 'https://magicseaweed.com/Kealia-Surf-Report/4818/Historic/', 'https://magicseaweed.com/Mana-Point-Surf-Report/4814/Historic/', 'https://magicseaweed.com/Pakala-Surf-Report/4813/Historic/', 'https://magicseaweed.com/PKs-Centers-Surf-Report/4815/Historic/', 'https://magicseaweed.com/Polihale-Surf-Report/3080/Historic/', 'https://magicseaweed.com/Shipwrecks-Surf-Report/7988/Historic/'],
-                    'North-West-Maui-Surfing': ['https://magicseaweed.com/Aluhi-Bay-Surf-Report/3668/Historic/', 'https://magicseaweed.com/Hana-Bay-Surf-Report/4923/Historic/', 'https://magicseaweed.com/Honokohau-Surf-Report/2782/Historic/', 'https://magicseaweed.com/Honolua-Surf-Report/697/Historic/', 'https://magicseaweed.com/Honomanu-Bay-Surf-Report/4924/Historic/', 'https://magicseaweed.com/Hookipa-Surf-Report/1244/Historic/', 'https://magicseaweed.com/Kaanapali-Point-Surf-Report/9324/Historic/', 'https://magicseaweed.com/Kahului-Harbor-Surf-Report/4927/Historic/', 'https://magicseaweed.com/Kanaha-Surf-Report/4926/Historic/', 'https://magicseaweed.com/La-Perouse-Bay-Surf-Report/4930/Historic/', 'https://magicseaweed.com/Lahaina-Harbor-Breakwall-Surf-Report/4287/Historic/', 'https://magicseaweed.com/Launiupoko-Surf-Report/8234/Historic/', 'https://magicseaweed.com/Little-Makaha-Surf-Report/2780/Historic/', 'https://magicseaweed.com/Maalaea-Bay-Surf-Report/618/Historic/', 'https://magicseaweed.com/Makena-Beach-Surf-Report/5875/Historic/', 'https://magicseaweed.com/Olowalu-Surf-Report/4928/Historic/', 'https://magicseaweed.com/Oneuli-Beach-Surf-Report/5876/Historic/', 'https://magicseaweed.com/Pauwela-Maui-Offshore-51205-Surf-Report/4284/Historic/', 'https://magicseaweed.com/Pavilions-Surf-Report/2785/Historic/', 'https://magicseaweed.com/Peahi-Jaws-Surf-Report/617/Historic/', 'https://magicseaweed.com/Rainbows-Surf-Report/2966/Historic/', 'https://magicseaweed.com/S-Turns-Surf-Report/8233/Historic/', 'https://magicseaweed.com/Tavares-Bay-Surf-Report/4925/Historic/', 'https://magicseaweed.com/The-Cove-Surf-Report/4929/Historic/', 'https://magicseaweed.com/Waiehu-Beach-Surf-Report/9325/Historic/', 'https://magicseaweed.com/Windmills-Surf-Report/1274/Historic/', 'https://magicseaweed.com/Windmills-Maui-Surf-Report/3086/Historic/'], 'Oahu-North-Shore-Surfing': [], 'Oahu-South-Shore-Surfing': ['https://magicseaweed.com/Ala-Moana-Surf-Report/661/Historic/', 'https://magicseaweed.com/Baby-Makapu%26rsquo%3Bu-Surf-Report/7677/Historic/', 'https://magicseaweed.com/Barbers-Point-Surf-Report/3082/Historic/', 'https://magicseaweed.com/Black-Point-Surf-Report/4913/Historic/', 'https://magicseaweed.com/Castles-Surf-Report/8266/Historic/', 'https://magicseaweed.com/Diamond-Head-Surf-Report/4697/Historic/', 'https://magicseaweed.com/Ewa-Beach-Surf-Report/4922/Historic/', 'https://magicseaweed.com/Fours-Surf-Report/4918/Historic/', 'https://magicseaweed.com/Kailua-Surf-Report/671/Historic/', 'https://magicseaweed.com/Kaisers-Surf-Report/4919/Historic/', 'https://magicseaweed.com/Kewalos-Surf-Report/7659/Historic/', 'https://magicseaweed.com/Lanikai-Beach-Surf-Report/5874/Historic/', 'https://magicseaweed.com/Maili-Point-Surf-Report/3084/Historic/', 'https://magicseaweed.com/Makaha-Point-Surf-Report/983/Historic/', 'https://magicseaweed.com/Makapuu-Point-Surf-Report/984/Historic/', 'https://magicseaweed.com/North-Beach-Surf-Report/6798/Historic/', 'https://magicseaweed.com/Old-Mans-Surf-Report/9334/Historic/', 'https://magicseaweed.com/Papaoneone-Surf-Report/5878/Historic/', 'https://magicseaweed.com/Populars-Surf-Report/4915/Historic/', 'https://magicseaweed.com/Publics-Surf-Report/4914/Historic/', 'https://magicseaweed.com/Queens-Canoes-Waikiki-Surf-Report/662/Historic/', 'https://magicseaweed.com/Rice-Bowl-Surf-Report/9335/Historic/', 'https://magicseaweed.com/Rockpile-Surf-Report/4920/Historic/', 'https://magicseaweed.com/Sand-Island-Surf-Report/4921/Historic/', 'https://magicseaweed.com/Sandy-Beach-Surf-Report/1099/Historic/', 'https://magicseaweed.com/The-Wall-Surf-Report/9333/Historic/', 'https://magicseaweed.com/Threes-Surf-Report/4917/Historic/', 'https://magicseaweed.com/Tonggs-Surf-Report/7658/Historic/', 'https://magicseaweed.com/Tracks-Surf-Report/3085/Historic/', 'https://magicseaweed.com/Waikiki-Beach-Surf-Report/4916/Historic/', 'https://magicseaweed.com/White-Plains-Beach-Surf-Report/7660/Historic/']}
-
-
-def get_country_geo_coordinates(country, area_dict):
-    print(f'{country = }')
-
-    area_geo_coordinates = dict()
-    for area, beach_list in area_dict.items():
-        beach_coordinates_list = list()
-        for beach_url in beach_list:
-
-            # get the beach name from the beach url
-            beach_name = get_beach_name(beach_url)
-            # print(f'{beach_name = }')
-
-            # build the query from the country name and the beach name
-            query = country + ' ' + beach_name + ' beach'
-            print(f'{query = } ')
-
-            # query the API and get the data under a dictionary
-            response_data = query_geocoding_api(query)
-            # print(f'{response_data = }')
-
-            # make a tuple with coordinates (latitude, longitude)
-            coordinates = get_beach_coordinates(response_data)
-            # print(f'{coordinates = }')
-
-            # create a dictionary with the beach url and its coordinates
-            beach_coordinates = {beach_url: coordinates}
-            # print(f'{beach_coordinates = }')
-
-            # append the dictionary to the list of beaches for a given area
-            beach_coordinates_list.append(beach_coordinates)
-
-        # area is the dictionary key:
-        # create a new element of the area_geo_coordinates dictionary with area as the key and the list as the value
-        area_geo_coordinates[area] = beach_coordinates_list
-
-    return area_geo_coordinates
-
-
-def get_beach_name(beach_url):
-    beach_surf_report = beach_url.split('/')[3]
-    beach_name = ' '.join(beach_surf_report.split('-')[:-2])
-    return beach_name
-
-
-def query_geocoding_api(query):
-
-    api_key_absolute_path = '/Users/mathias/Programming/myrepo/google_api_key.txt'
-
-    with open(api_key_absolute_path, 'r') as api_key_file:
-        api_key = api_key_file.read()
-
-    # Construct the request URL
-    url = f'https://maps.googleapis.com/maps/api/geocode/json?address={query}&key={api_key}'
-
-    # Send an HTTP GET request to the constructed URL
-    response = requests.get(url)
-    # print(response)
-
-    # Parse the JSON response
-    response_data = json.loads(response.text)
-
-    return response_data
+beach_info = {
+    'url': 'https://magicseaweed.com/Bat-Yam-Surf-Report/3662/Historic/',
+    'name': 'Bat-Yam-Surf',
+    'timestamp': [datetime.datetime(2023, 4, 14, 0, 0),
+                  datetime.datetime(2023, 4, 14, 3, 0),
+                  datetime.datetime(2023, 4, 14, 6, 0),
+                  datetime.datetime(2023, 4, 14, 9, 0),
+                  datetime.datetime(2023, 4, 14, 12, 0),
+                  datetime.datetime(2023, 4, 14, 15, 0),
+                  datetime.datetime(2023, 4, 14, 18, 0),
+                  datetime.datetime(2023, 4, 14, 21, 0), datetime.datetime(2023, 4, 15, 0, 0),
+                  datetime.datetime(2023, 4, 15, 3, 0), datetime.datetime(2023, 4, 15, 6, 0),
+                  datetime.datetime(2023, 4, 15, 9, 0), datetime.datetime(2023, 4, 15, 12, 0),
+                  datetime.datetime(2023, 4, 15, 15, 0), datetime.datetime(2023, 4, 15, 18, 0),
+                  datetime.datetime(2023, 4, 15, 21, 0), datetime.datetime(2023, 4, 16, 0, 0),
+                  datetime.datetime(2023, 4, 16, 3, 0), datetime.datetime(2023, 4, 16, 6, 0),
+                  datetime.datetime(2023, 4, 16, 9, 0), datetime.datetime(2023, 4, 16, 12, 0),
+                  datetime.datetime(2023, 4, 16, 15, 0), datetime.datetime(2023, 4, 16, 18, 0),
+                  datetime.datetime(2023, 4, 16, 21, 0), datetime.datetime(2023, 4, 17, 0, 0),
+                  datetime.datetime(2023, 4, 17, 3, 0), datetime.datetime(2023, 4, 17, 6, 0),
+                  datetime.datetime(2023, 4, 17, 9, 0), datetime.datetime(2023, 4, 17, 12, 0),
+                  datetime.datetime(2023, 4, 17, 15, 0), datetime.datetime(2023, 4, 17, 18, 0),
+                  datetime.datetime(2023, 4, 17, 21, 0), datetime.datetime(2023, 4, 18, 0, 0),
+                  datetime.datetime(2023, 4, 18, 3, 0), datetime.datetime(2023, 4, 18, 6, 0),
+                  datetime.datetime(2023, 4, 18, 9, 0), datetime.datetime(2023, 4, 18, 12, 0),
+                  datetime.datetime(2023, 4, 18, 15, 0), datetime.datetime(2023, 4, 18, 18, 0),
+                  datetime.datetime(2023, 4, 18, 21, 0), datetime.datetime(2023, 4, 19, 0, 0),
+                  datetime.datetime(2023, 4, 19, 3, 0), datetime.datetime(2023, 4, 19, 6, 0),
+                  datetime.datetime(2023, 4, 19, 9, 0), datetime.datetime(2023, 4, 19, 12, 0),
+                  datetime.datetime(2023, 4, 19, 15, 0), datetime.datetime(2023, 4, 19, 18, 0),
+                  datetime.datetime(2023, 4, 19, 21, 0), datetime.datetime(2023, 4, 20, 0, 0),
+                  datetime.datetime(2023, 4, 20, 3, 0), datetime.datetime(2023, 4, 20, 6, 0),
+                  datetime.datetime(2023, 4, 20, 9, 0), datetime.datetime(2023, 4, 20, 12, 0),
+                  datetime.datetime(2023, 4, 20, 15, 0), datetime.datetime(2023, 4, 20, 18, 0),
+                  datetime.datetime(2023, 4, 20, 21, 0)],
+    'weather': ['Clear', 'Clear', 'Clear', 'Sunny', 'Sunny', 'Sunny', 'Sunny', 'Clear', 'Clear', 'Clear', 'Clear',
+                'Sunny', 'Sunny', 'Sunny', 'Sunny', 'Clear', 'Clear', 'Clear', 'Clear', 'Sunny', 'Sunny', 'Sunny',
+                'Sunny', 'Clear', 'Clear', 'Clear', 'Clear', 'Sunny', 'Sunny', 'Sunny', 'Sunny', 'Clear', 'Clear',
+                'Clear', 'Clear', 'Sunny', 'Sunny', 'Sunny', 'Sunny', 'Clear', 'Clear', 'Clear', 'Clear', 'Sunny',
+                'Sunny', 'Sunny', 'Sunny', 'Clear', 'Clear', 'Clear', 'Clear', 'Sunny', 'Sunny', 'Sunny', 'Sunny',
+                'Clear'],
+    'temperature': [16, 15, 14, 18, 20, 21, 20, 18, 17, 17, 17, 19, 22, 22, 21, 19, 18, 18, 17, 20, 22, 21, 21, 20, 19,
+                    18, 18, 21, 23, 23, 22, 22, 21, 19, 19, 23, 24, 26, 25, 23, 24, 24, 22, 24, 29, 24, 24, 23, 23, 19,
+                    18, 19, 20, 19, 19, 18],
+    'swell': [[0.9, 1.4], [0.8, 1.3], [0.7, 1.2], [0.7, 1.1], [0.6, 1.0], [0.6, 0.9], [0.5, 0.8], [0.5, 0.7],
+              [0.4, 0.7], [0.4, 0.6], [0.3, 0.5], [0.3, 0.5], [0.3, 0.5], [0.3, 0.4], [0.2, 0.4], [0.2, 0.4],
+              [0.2, 0.3], [0.2, 0.3], [0.2, 0.3], [0.1, 0.2], [0.1, 0.2], [0.1, 0.2], [0.1, 0.2], [0.1, 0.2],
+              [0.0, 0.0], [0.0, 0.0], [0.1, 0.2], [0.1, 0.2], [0.2, 0.2], [0.2, 0.3], [0.2, 0.3], [0.2, 0.3],
+              [0.2, 0.3], [0.2, 0.3], [0.2, 0.3], [0.2, 0.3], [0.2, 0.3], [0.2, 0.2], [0.1, 0.2], [0.1, 0.2],
+              [0.1, 0.2], [0.1, 0.2], [0.1, 0.2], [0.0, 0.0], [0.1, 0.2], [0.1, 0.2], [0.2, 0.2], [0.2, 0.3],
+              [0.2, 0.3], [0.4, 0.6], [0.5, 0.7], [0.6, 0.9], [0.6, 0.9], [0.6, 0.9], [0.6, 0.9], [0.5, 0.8]],
+    'steady_wind_speed': [5, 8, 7, 8, 8, 16, 20, 17, 10, 10, 9, 3, 6, 15, 14, 13, 7, 8, 4, 10, 12, 12, 12, 10, 11, 3, 5,
+                          2, 9, 13, 12, 7, 11, 1, 8, 7, 12, 11, 11, 9, 6, 9, 10, 7, 3, 32, 22, 17, 25, 17, 15, 16, 21,
+                          22, 16, 14],
+    'gust_wind_speed': [5, 9, 8, 9, 8, 16, 21, 24, 12, 12, 11, 4, 6, 15, 17, 21, 10, 10, 5, 11, 12, 12, 14, 12, 14, 3,
+                        5, 2, 9, 13, 13, 8, 12, 1, 8, 8, 12, 11, 12, 9, 6, 9, 10, 7, 4, 34, 35, 22, 31, 27, 19, 16, 21,
+                        22, 17, 16],
+    'direction': ['Cross/Offshore SSE - 168°', 'Cross/Offshore SSE - 160°', 'Offshore ESE - 121°', 'Offshore ENE - 67°',
+                  'Onshore NW - 313°', 'Cross/Onshore NNW - 339°', 'Cross-shore N - 3°', 'Cross/Offshore NNE - 18°',
+                  'Cross/Offshore NNE - 20°', 'Cross/Offshore NNE - 22°', 'Cross/Offshore NNE - 21°',
+                  'Cross/Onshore SSW - 194°', 'Onshore W - 264°', 'Onshore WNW - 290°', 'Cross-shore N - 359°',
+                  'Cross/Offshore NNE - 14°', 'Onshore NNW - 333°', 'Onshore WNW - 282°', 'Offshore SE - 140°',
+                  'Cross/Onshore SSW - 201°', 'Onshore WSW - 258°', 'Onshore W - 275°', 'Cross/Onshore N - 350°',
+                  'Offshore NNE - 25°', 'Onshore NNW - 334°', 'Cross/Onshore N - 354°', 'Cross-shore N - 2°',
+                  'Onshore SW - 231°', 'Onshore W - 277°', 'Onshore WNW - 291°', 'Onshore NW - 324°',
+                  'Offshore NE - 55°', 'Onshore WSW - 251°', 'Offshore NNE - 30°', 'Offshore SE - 129°',
+                  'Onshore SSW - 206°', 'Onshore WNW - 284°', 'Onshore NNW - 329°', 'Cross/Onshore N - 355°',
+                  'Offshore ENE - 57°', 'Offshore ENE - 77°', 'Offshore SSE - 152°', 'Cross/Onshore SSW - 195°',
+                  'Offshore NNE - 26°', 'Cross/Onshore NNW - 347°', 'Onshore NNW - 328°', 'Offshore NNE - 25°',
+                  'Offshore E - 80°', 'Onshore W - 260°', 'Cross/Onshore NNW - 343°', 'Onshore NW - 323°',
+                  'Onshore NW - 313°', 'Onshore WNW - 295°', 'Onshore WNW - 301°', 'Onshore WNW - 302°',
+                  'Onshore WNW - 298°'],
+    'surfability': [2, 2, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}
 
 
-def get_beach_coordinates(response_data):
-    # Extract the latitude and longitude from the response
-    latitude = response_data['results'][0]['geometry']['location']['lat']
-    longitude = response_data['results'][0]['geometry']['location']['lng']
-
-    return latitude, longitude
-
-
-def query_stormglass():
-
+def query_stormglass(beach_info):
     api_key_absolute_path = '/Users/mathias/Programming/myrepo/stormglass_api_key.txt'
 
-    start_date = ''
-    end_date = ''
+    start_date_expected = datetime.datetime(2023, 4, 14, 0, 0)
+    end_date_expected = datetime.datetime(2023, 4, 20, 21, 0)
+    features = ['currentDirection', 'currentSpeed']
 
-    with open(api_key_absolute_path, 'r') as api_key_file:
-        api_key = api_key_file.read()
+    start_date = beach_info['timestamp'][0]
+    end_date = beach_info['timestamp'][-1]
 
-    response = requests.get('https://api.stormglass.io/v2/weather/point',
-                            params={'lat': 32.9174347,
-                                    'lng': 35.0797628,
-                                    'params': ','.join(['currentDirection', 'currentSpeed']),
-                                    'start': start_date,  # Convert to UTC timestamp
-                                    'end': end_date  # Convert to UTC timestamp
-                                    },
-                            headers={'Authorization': api_key})
+    print(start_date, start_date_expected)
+    print(end_date, end_date_expected)
 
-
-
-    # Do something with response data.
-    json_data = response.json()
-
-    print(json_data)
-
-
+    # with open(api_key_absolute_path, 'r') as api_key_file:
+    #     api_key = api_key_file.read()
+    #
+    # response = requests.get('https://api.stormglass.io/v2/weather/point',
+    #                         params={'lat': 32.9174347,
+    #                                 'lng': 35.0797628,
+    #                                 'params': ','.join(features),
+    #                                 'start': start_date,  # Convert to UTC timestamp
+    #                                 'end': end_date  # Convert to UTC timestamp
+    #                                 },
+    #                         headers={'Authorization': api_key})
+    #
+    # # Do something with response data.
+    # json_data = response.json()
+    # print(json_data)
 
 
 if __name__ == '__main__':
-
     # For a given country we want a dictionary with areas and their longitude and latitude
     # israel_geo_coordinates = get_country_geo_coordinates('ISRAEL', area_dict_israel)
     # print(israel_geo_coordinates)
 
-    # query_stormglass()
-
-    pass
-
-
-
-
-
-
+    query_stormglass(beach_info)
