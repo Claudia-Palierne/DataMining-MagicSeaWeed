@@ -39,7 +39,7 @@ def main():
 
         if execution_mode == 'database':
             database.initialize_db() if idx == 0 else None
-            database.insert_areas(areas_urls, country)
+            database.insert_areas(area_dict, country)
             database.insert_beaches(area_dict)
 
         execute(execution_mode, beaches_soup)
@@ -50,9 +50,9 @@ def build_area_dict(areas_urls, country):
     beaches_url = []
     for url in areas_urls:
         area_name = url.split('/')[CONFIG['IDX_AREA_NAME']]
-        area_dict[area_name] = one_beach_scrapping.area_data(url)
-        beaches_url += [beach["url"] for beach in area_dict[area_name]]
-        print(f'{country}: {area_name}: beaches urls extraction successful : {beaches_url} and {area_dict[area_name]}')
+        area_dict[(area_name, url)] = one_beach_scrapping.area_data(url)
+        beaches_url += [beach["url"] for beach in area_dict[(area_name, url)]]
+        print(f'{country}: {area_name}: beaches urls extraction successful : {beaches_url} and {area_dict[(area_name, url)]}')
     return area_dict, beaches_url
 
 
