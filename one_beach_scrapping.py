@@ -169,4 +169,17 @@ def get_area_data(area_url):
     area_url_request = requests.get(area_url)
     area_url_soup = BeautifulSoup(area_url_request.content, "html.parser")
     tag_content = area_url_soup.find('div', class_="msw-map")
-    return tag_content['data-collection']
+    return json.loads(tag_content['data-collection'])
+
+
+def area_data(area_url):
+    content = get_area_data(area_url)
+    area = list()
+    for beach_info in content:
+        beach = dict()
+        beach["url"] = CONFIG["HOST"] + beach_info['url'] + CONFIG["ARCHIVE"]
+        beach["name"] = beach_info["name"]
+        beach["latitude"] = beach_info["lat"]
+        beach["longitude"] = beach_info["lon"]
+        area.append(beach)
+    return area

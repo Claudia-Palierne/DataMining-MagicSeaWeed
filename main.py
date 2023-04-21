@@ -50,14 +50,9 @@ def build_area_dict(areas_urls, country):
     beaches_url = []
     for url in areas_urls:
         area_name = url.split('/')[CONFIG['IDX_AREA_NAME']]
-        beach_per_area_url = url_extraction.extract_beaches_urls([url])
-
-        content = one_beach_scrapping.get_area_data(url)
-
-        print(f'{country}: {area_name}: beaches urls extraction successful')
-        area_dict[area_name] = beach_per_area_url
-        beaches_url += beach_per_area_url
-
+        area_dict[area_name] = one_beach_scrapping.area_data(url)
+        beaches_url += [beach["url"] for beach in area_dict[area_name]]
+        print(f'{country}: {area_name}: beaches urls extraction successful : {beaches_url} and {area_dict[area_name]}')
     return area_dict, beaches_url
 
 
@@ -89,7 +84,6 @@ def create_parser():
 
     # Using parser to further use the arguments
     return parser.parse_args()
-
 
 
 if __name__ == "__main__":
