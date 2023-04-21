@@ -13,6 +13,13 @@ with open("conf.json", "r") as jsonfile:
     CONFIG = json.load(jsonfile)
 
 
+def get_area_date(area_url):
+    area_url_request = requests.get(area_url, headers=CONFIG['FAKE_USER_HEADER'])
+    area_url_soup = BeautifulSoup(area_url_request.content, "html.parser")
+    content = area_url_soup.find_all('div', class_="msw-map leaflet-container leaflet-touch leaflet-retina leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom")
+    print(content)
+
+
 def get_spot_beaches_urls(url):
     """
     Extract the urls of every spot from the area's url.
@@ -86,3 +93,5 @@ def get_soup(urls):
         else:
             request_soup += [BeautifulSoup(response.content, "html.parser")]
     return request_soup
+
+

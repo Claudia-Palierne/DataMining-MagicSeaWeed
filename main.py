@@ -52,6 +52,8 @@ def build_area_dict(areas_urls, country):
         area_name = url.split('/')[CONFIG['IDX_AREA_NAME']]
         beach_per_area_url = url_extraction.extract_beaches_urls([url])
 
+        content = one_beach_scrapping.get_area_data(url)
+
         print(f'{country}: {area_name}: beaches urls extraction successful')
         area_dict[area_name] = beach_per_area_url
         beaches_url += beach_per_area_url
