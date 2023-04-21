@@ -16,6 +16,7 @@ with open("conf_sql.json", "r") as jsonfile:
     SQL_CONFIG = json.load(jsonfile)
 
 
+
 TABLES = {}
 TABLES['Countries'] = (
     """CREATE TABLE IF NOT EXISTS `Countries` ( 
@@ -41,6 +42,8 @@ TABLES['Beaches'] = (
     `name` varchar(255) NOT NULL,
     `url` varchar(255) NOT NULL,
     `area_id` int(11) NOT NULL,
+    `latitude` float(24) NOT NULL,
+    `longitude` float(24) NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (area_id) REFERENCES Areas(id)
     ) ENGINE=InnoDB""")
@@ -71,7 +74,8 @@ def connect_to_db(database_selected=False):
         host=SQL_CONFIG["HOST"],
         user=SQL_CONFIG["USER"],
         password=SQL_CONFIG["PASSWORD"],
-        database=database)
+        database=database
+    )
 
     return connection
 
@@ -139,10 +143,10 @@ def insert_countries():
     connection.close()
 
 
-def insert_areas(areas_links, country):
+def insert_areas(areas_dict, country):
     """
     This function will insert data inside the table Areas.
-    :param areas_links: a list of all the areas' urls.
+    :param areas_dict: a dictionary of all the areas' info.
     :param country: a string with the country name.
     :return: None
     """
@@ -155,9 +159,9 @@ def insert_areas(areas_links, country):
                         SELECT * FROM Areas 
                         WHERE `name` = %s AND `url` = %s 
                             AND country_id = (SELECT id FROM Countries where Countries.name = %s));"""
-    for url in areas_links:
-        name = url.split('/')[CONFIG['IDX_AREA_NAME']]
-        area = (name, url, country)
+    for area, beaches in areas_dict.items():
+        area_name, area_url = area
+        area = (area_name, area_url, country)
         cursor.execute(add_area, area + area)
         print(f'{area} successfully inserted into db')
 
@@ -175,19 +179,19 @@ def insert_beaches(area_dict):
     connection = connect_to_db(database_selected=True)
     cursor = connection.cursor()
 
-    add_beach = """INSERT INTO Beaches (`name`, `url`, `area_id`) 
-                        SELECT %s, %s, (SELECT id FROM Areas where Areas.name = %s)
+    add_beach = """INSERT INTO Beaches (`name`, `url`, `area_id`, `latitude`, `longitude`) 
+                        SELECT %s, %s, (SELECT id FROM Areas where Areas.url = %s), %s, %s
                         WHERE NOT EXISTS (
                         SELECT * FROM Beaches
                         WHERE name = %s AND url = %s
-                            AND area_id = (SELECT id FROM Areas where Areas.name = %s));"""
-    for area_name, beach_links in area_dict.items():
-        for beach_url in beach_links:
-
-            beach_name = re.search(r"/([^/]+?)-Surf", beach_url).group()[1:]
-            beach = (beach_name, beach_url, area_name)
+                            AND area_id = (SELECT id FROM Areas where Areas.url = %s)
+                            AND latitude = %s AND longitude = %s);"""
+    for area, beaches in area_dict.items():
+        area_name, area_url = area
+        for beach in beaches:
+            beach = (beach["name"], beach["url"], area_url, beach["latitude"], beach["longitude"])
             cursor.execute(add_beach, beach + beach)
-            print(f'{beach_name} successfully inserted into db')
+            print(f'{beach} successfully inserted into db')
 
     connection.commit()
     cursor.close()

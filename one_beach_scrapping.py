@@ -1,6 +1,9 @@
 from datetime import datetime
 import json
 import re
+import requests
+from bs4 import BeautifulSoup
+
 
 with open("conf.json", "r") as jsonfile:
     CONFIG = json.load(jsonfile)
@@ -160,3 +163,23 @@ Steady Wind Speed (KpH) | Gust Wind Speed (KpH) |  Surfability [0-5]")
               beach_info['gust_wind_speed'][i],
               beach_info['surfability'][i],
               beach_info['direction'][i])
+
+
+def get_area_data(area_url):
+    area_url_request = requests.get(area_url)
+    area_url_soup = BeautifulSoup(area_url_request.content, "html.parser")
+    tag_content = area_url_soup.find('div', class_="msw-map")
+    return json.loads(tag_content['data-collection'])
+
+
+def area_data(area_url):
+    content = get_area_data(area_url)
+    area = list()
+    for beach_info in content:
+        beach = dict()
+        beach["url"] = CONFIG["HOST"] + beach_info['url'] + CONFIG["ARCHIVE"]
+        beach["name"] = beach_info["name"]
+        beach["latitude"] = beach_info["lat"]
+        beach["longitude"] = beach_info["lon"]
+        area.append(beach)
+    return area
