@@ -4,6 +4,7 @@ import database
 import one_beach_scrapping
 import url_extraction
 import json
+import api
 
 with open("conf.json", "r") as jsonfile:
     CONFIG = json.load(jsonfile)
@@ -34,7 +35,10 @@ def main():
 
         area_dict, beaches_url = build_area_dict(areas_urls, country)
 
-        # we should only use area dict and no more beaches url, but that's not for today mamen
+        # Ce que j'ai ajouté : ya plus grequests dans ce code
+        # area_dict_with_info = one_beach_scrapping.get_beach_info(area_dict)
+        # area_dict_with_info = api.add_api_data(area_dict_with_info)
+        # devenu useless :
         beaches_soup = url_extraction.get_soup(beaches_url)
 
         if execution_mode == 'database':
@@ -53,6 +57,7 @@ def build_area_dict(areas_urls, country):
         area_dict[(area_name, url)] = one_beach_scrapping.area_data(url)
         beaches_url += [beach["url"] for beach in area_dict[(area_name, url)]]
         print(f'{country}: {area_name}: beaches urls extraction successful : {beaches_url} and {area_dict[(area_name, url)]}')
+
     return area_dict, beaches_url
 
 

@@ -183,3 +183,19 @@ def area_data(area_url):
         beach["longitude"] = beach_info["lon"]
         area.append(beach)
     return area
+
+
+def get_beach_info(area_dict):
+
+    for area_key, area in area_dict.items():
+        # print(f'\n{area_key = }')
+        # print(f'{area = }')
+        for beach in area:
+            rqst = requests.get(beach['url'], headers=CONFIG['FAKE_USER_HEADER'])
+            bs = BeautifulSoup(rqst.content, "html.parser")
+            beach_data = beach_historic(bs)
+            # print(f'{beach["name"] = } {beach_data["name"] = }')
+            beach['info'] = beach_data
+            # print(f'{beach = }\n\n')
+
+    return area_dict
