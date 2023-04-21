@@ -70,7 +70,7 @@ def get_beach_name(beach_url):
 
 def query_geocoding_api(query):
 
-    api_key_absolute_path = ''
+    api_key_absolute_path = '/Users/mathias/Programming/myrepo/google_api_key.txt'
 
     with open(api_key_absolute_path, 'r') as api_key_file:
         api_key = api_key_file.read()
@@ -96,13 +96,44 @@ def get_beach_coordinates(response_data):
     return latitude, longitude
 
 
+def query_stormglass():
+
+    api_key_absolute_path = '/Users/mathias/Programming/myrepo/stormglass_api_key.txt'
+
+    start_date = ''
+    end_date = ''
+
+    with open(api_key_absolute_path, 'r') as api_key_file:
+        api_key = api_key_file.read()
+
+    response = requests.get('https://api.stormglass.io/v2/weather/point',
+                            params={'lat': 32.9174347,
+                                    'lng': 35.0797628,
+                                    'params': ','.join(['currentDirection', 'currentSpeed']),
+                                    'start': start_date,  # Convert to UTC timestamp
+                                    'end': end_date  # Convert to UTC timestamp
+                                    },
+                            headers={'Authorization': api_key})
+
+
+
+    # Do something with response data.
+    json_data = response.json()
+
+    print(json_data)
+
+
 
 
 if __name__ == '__main__':
 
     # For a given country we want a dictionary with areas and their longitude and latitude
-    israel_geo_coordinates = get_country_geo_coordinates('ISRAEL', area_dict_israel)
-    print(israel_geo_coordinates)
+    # israel_geo_coordinates = get_country_geo_coordinates('ISRAEL', area_dict_israel)
+    # print(israel_geo_coordinates)
+
+    # query_stormglass()
+
+    pass
 
 
 
