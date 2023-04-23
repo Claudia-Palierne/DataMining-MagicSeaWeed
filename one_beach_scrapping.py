@@ -154,7 +154,7 @@ def print_beach_info(beach_info):
         if i % 8 == 0:
             print(beach_info['timestamp'][i].date())
             print("Time | Weather  | Temperature | Swell (m) [min-max]| \
-Steady Wind Speed (KpH) | Gust Wind Speed (KpH) |  Surfability [0-5]")
+Steady Wind Speed (KpH) | Gust Wind Speed (KpH) |  Surfability [0-5] | currentDirection [??] | currentSpeed [??]")
         print(beach_info['timestamp'][i].time(),
               beach_info['weather'][i],
               beach_info['temperature'][i],
@@ -162,7 +162,9 @@ Steady Wind Speed (KpH) | Gust Wind Speed (KpH) |  Surfability [0-5]")
               beach_info['steady_wind_speed'][i],
               beach_info['gust_wind_speed'][i],
               beach_info['surfability'][i],
-              beach_info['direction'][i])
+              beach_info['direction'][i],
+              beach_info['currentDirection'][i],
+              beach_info['currentSpeed'][i])
 
 
 def get_area_data(area_url):

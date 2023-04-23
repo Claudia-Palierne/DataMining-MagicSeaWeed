@@ -61,6 +61,8 @@ TABLES['Conditions'] = (
     `gust_wind_speed(kph)` int(11) NOT NULL,
     `surfability` int(11) NOT NULL,
     `wind_direction` varchar(255) NOT NULL,
+    `current_direction(°)` float(24) NOT NULL,
+    `current_speed(mps)` float(24) NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (beach_id) REFERENCES Beaches(id)
     ) ENGINE=InnoDB""")
@@ -158,7 +160,8 @@ def insert_areas(areas_dict, country):
                     WHERE NOT EXISTS (
                         SELECT * FROM Areas 
                         WHERE `name` = %s AND `url` = %s 
-                            AND country_id = (SELECT id FROM Countries where Countries.name = %s));"""
+                            AND country_id = (SELECT id FROM Countries where Countries.name = %s)
+                    );"""
     for area, beaches in areas_dict.items():
         area_name, area_url = area
         area = (area_name, area_url, country)
@@ -182,15 +185,15 @@ def insert_beaches(area_dict):
     add_beach = """INSERT INTO Beaches (`name`, `url`, `area_id`, `latitude`, `longitude`) 
                         SELECT %s, %s, (SELECT id FROM Areas where Areas.url = %s), %s, %s
                         WHERE NOT EXISTS (
-                        SELECT * FROM Beaches
-                        WHERE name = %s AND url = %s
-                            AND area_id = (SELECT id FROM Areas where Areas.url = %s)
-                            AND latitude = %s AND longitude = %s);"""
+                            SELECT * FROM Beaches
+                            WHERE name = %s AND url = %s
+                                AND area_id = (SELECT id FROM Areas where Areas.url = %s)
+                        );"""
     for area, beaches in area_dict.items():
         area_name, area_url = area
         for beach in beaches:
-            beach = (beach["name"], beach["url"], area_url, beach["latitude"], beach["longitude"])
-            cursor.execute(add_beach, beach + beach)
+            beach_tup = (beach["name"], beach["url"], area_url, beach["latitude"], beach["longitude"])
+            cursor.execute(add_beach, beach_tup + (beach["name"], beach["url"], area_url))
             print(f'{beach} successfully inserted into db')
 
     connection.commit()
@@ -209,8 +212,8 @@ def insert_conditions(beach_info):
 
     add_condition = """INSERT INTO Conditions (`beach_id`, `timestamp`, `weather`, `wave_height_min(m)`, 
                     `wave_height_max(m)`, `temperature(C)`, `steady_wind_speed(kph)`, `gust_wind_speed(kph)`, 
-                    `surfability`, `wind_direction`) 
-                    SELECT (SELECT id FROM Beaches where Beaches.url = %s), %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    `surfability`, `wind_direction`, `current_direction(°)`, `current_speed(mps)`) 
+                    SELECT (SELECT id FROM Beaches where Beaches.url = %s), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                     WHERE NOT EXISTS (
                         SELECT * FROM Conditions 
                         WHERE beach_id = (SELECT id FROM Beaches where Beaches.url = %s) AND timestamp = %s
@@ -220,7 +223,8 @@ def insert_conditions(beach_info):
         condition = (beach_info['url'], beach_info['timestamp'][i],
                      beach_info['weather'][i], beach_info['swell'][i][0], beach_info['swell'][i][1],
                      beach_info['temperature'][i], beach_info['steady_wind_speed'][i], beach_info['gust_wind_speed'][i],
-                     beach_info['surfability'][i], beach_info['direction'][i])
+                     beach_info['surfability'][i], beach_info['direction'][i],
+                     beach_info["currentDirection"][i], beach_info["currentSpeed"][i])
         cursor.execute(add_condition, condition + (beach_info['url'], beach_info['timestamp'][i]))
         print(f'{time} successfully inserted into db')
 
