@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 import json
+import logging
 
 
 import grequests
@@ -13,11 +14,16 @@ with open("conf.json", "r") as jsonfile:
     CONFIG = json.load(jsonfile)
 
 
+# Create a logger with the same name as the one in main.py
+logger = logging.getLogger('magicLogger.log')
+
+
 def get_area_date(area_url):
     area_url_request = requests.get(area_url, headers=CONFIG['FAKE_USER_HEADER'])
     area_url_soup = BeautifulSoup(area_url_request.content, "html.parser")
     content = area_url_soup.find_all('div', class_="msw-map leaflet-container leaflet-touch leaflet-retina leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom")
-    print(content)
+
+    logging.info(content)
 
 
 def get_spot_beaches_urls(url):

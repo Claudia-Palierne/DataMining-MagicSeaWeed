@@ -2,12 +2,16 @@ import re
 import json
 import mysql.connector
 from mysql.connector import errorcode
+import logging
 
 # These are actually used :
 import grequests
 import one_beach_scrapping
 import requests
 from bs4 import BeautifulSoup
+
+# Create a logger with the same name as the one in main.py
+logger = logging.getLogger('magicLogger.log')
 
 with open("conf.json", "r") as jsonfile:
     CONFIG = json.load(jsonfile)
@@ -92,16 +96,17 @@ def create_database():
     cursor = connection.cursor()
     # Create database and tables
     try:
-        print("Creating database {}: ".format(SQL_CONFIG['DB_NAME']), end='')
+        logging.info("Creating database {}: ".format(SQL_CONFIG['DB_NAME']))
         cursor.execute(f"CREATE DATABASE {SQL_CONFIG['DB_NAME']} DEFAULT CHARACTER SET 'utf8'")
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_DB_CREATE_EXISTS:
-            print("Database already exists.")
+            logging.error("Database already exists.")
+
         else:
-            print(err.msg)
+            logging.error(err.msg)
             exit(1)
     else:
-        print("OK")
+        logging.info("Database already created.")
     cursor.close()
     connection.close()
 
@@ -138,7 +143,7 @@ def insert_countries():
     for name, url in CONFIG["SURF_FORECAST"].items():
         country = (name, url)
         cursor.execute(add_country, country + country)
-        print(f'{country} successfully inserted into db')
+        logging.info(f'{country} successfully inserted into db')
 
     connection.commit()
     cursor.close()
@@ -166,7 +171,7 @@ def insert_areas(areas_dict, country):
         area_name, area_url = area
         area = (area_name, area_url, country)
         cursor.execute(add_area, area + area)
-        print(f'{area} successfully inserted into db')
+        logging.info(f'{area} successfully inserted into db')
 
     connection.commit()
     cursor.close()
@@ -194,7 +199,7 @@ def insert_beaches(area_dict):
         for beach in beaches:
             beach_tup = (beach["name"], beach["url"], area_url, beach["latitude"], beach["longitude"])
             cursor.execute(add_beach, beach_tup + (beach["name"], beach["url"], area_url))
-            print(f'{beach} successfully inserted into db')
+            logging.info(f'{beach} successfully inserted into db')
 
     connection.commit()
     cursor.close()
@@ -226,7 +231,7 @@ def insert_conditions(beach_info):
                      beach_info['surfability'][i], beach_info['direction'][i],
                      beach_info["currentDirection"][i], beach_info["currentSpeed"][i])
         cursor.execute(add_condition, condition + (beach_info['url'], beach_info['timestamp'][i]))
-        print(f'{time} successfully inserted into db')
+        logging.info(f'{beach_info["url"]}: {time} in the db')
 
     connection.commit()
     cursor.close()

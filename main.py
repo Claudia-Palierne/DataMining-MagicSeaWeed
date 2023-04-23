@@ -1,10 +1,12 @@
 import argparse
-
 import database
 import one_beach_scrapping
 import url_extraction
 import json
 import api
+import logging
+
+logging.basicConfig(filename='magicLogger.log', level=logging.INFO, format='%(asctime)s:%(levelname)s:%(message)s')
 
 with open("conf.json", "r") as jsonfile:
     CONFIG = json.load(jsonfile)
@@ -29,13 +31,11 @@ def main():
     for idx, country in enumerate(country_to_scrap):
         # Extracting urls
         country_forecast_urls = CONFIG["SURF_FORECAST"].get(country)
-        print(f'{country}: url extraction successful')
+        logging.info(f'{country}: url extraction successful')
         areas_urls = url_extraction.extract_areas_urls(country_forecast_urls)
-        print(f'{country}: areas url extraction successful')
+        logging.info(f'{country}: areas url extraction successful')
 
-        area_dict, beaches_url = build_area_dict(areas_urls, country)
-        area_dict = one_beach_scrapping.get_beach_info(area_dict)
-        area_dict = api.add_api_data(area_dict)
+        area_dict = build_area_dict(areas_urls, country)
 
         if execution_mode == 'database':
             database.initialize_db() if idx == 0 else None
@@ -46,15 +46,23 @@ def main():
 
 
 def build_area_dict(areas_urls, country):
+    area_dict = create_area_dict(areas_urls, country)
+    area_dict = one_beach_scrapping.get_beach_info(area_dict)
+    area_dict = api.add_api_data(area_dict)
+
+    return area_dict
+
+
+def create_area_dict(areas_urls, country):
     area_dict = {}
     beaches_url = []
     for url in areas_urls:
         area_name = url.split('/')[CONFIG['IDX_AREA_NAME']]
         area_dict[(area_name, url)] = one_beach_scrapping.area_data(url)
         beaches_url += [beach["url"] for beach in area_dict[(area_name, url)]]
-        print(f'{country}: {area_name}: beaches urls extraction successful : {beaches_url} and {area_dict[(area_name, url)]}')
+        logging.info(f'{country}: {area_name}: beaches urls extraction successful')
 
-    return area_dict, beaches_url
+    return area_dict
 
 
 def execute(mode, area_dict):
