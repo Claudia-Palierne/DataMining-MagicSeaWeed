@@ -4,14 +4,7 @@ import datetime
 
 FEATURES = ['currentDirection', 'currentSpeed']
 API_KEY_ABSOLUTE_PATH = '/Users/mathias/Programming/myrepo/stormglass_api_key.txt'
-
-
-query_result_for_test_path = '/Users/mathias/Programming/myrepo/Geocoordinates.txt'
-with open(query_result_for_test_path) as query_file:
-    data = query_file.read()
-
-query_result_for_test = json.loads(data)
-
+API_QUERY_RESULTS_FOR_TESTING_PATH = '/Users/mathias/Programming/myrepo/test_api_data.txt'
 
 
 def add_api_data(area_dict):
@@ -25,8 +18,7 @@ def add_api_data(area_dict):
             parameters = {'lat': latitude, 'lng': longitude, 'params': ','.join(FEATURES),
                           'start': start_date, 'end': end_date}
 
-            # api_data = query_stormglass(parameters, api_key)
-            api_data = query_result_for_test
+            api_data = query_stormglass(parameters, api_key)
 
             # add data to dictionary
             for feature in FEATURES:
@@ -42,18 +34,16 @@ def get_api_key():
 
     return api_key
 
+
 def extract_features_from_json(feature, data_dict):
     feature_data = list()
     time_slots_lst = data_dict['hours']
     for slot, slot_dict in enumerate(time_slots_lst):
         slot_matches_time_frame = slot % 3 == 0
         if slot_matches_time_frame:
-            print(f'{slot = } , {slot_dict.get("time") = }')
             feature_data.append(slot_dict.get(feature).get('meto'))
 
     return feature_data
-
-
 
 def get_geo_coordinates(beach):
     latitude = beach['latitude']
@@ -68,16 +58,31 @@ def get_time_interval(beach):
     return start_date, end_date
 
 
+
+def get_test_api_data(absolute_path):
+    with open(absolute_path) as query_file:
+        data = query_file.read()
+    api_data_for_test = json.loads(data)
+
+    return api_data_for_test
+
+
 def query_stormglass(parameters, api_key):
 
-    response = requests.get('https://api.stormglass.io/v2/weather/point',
-                            params=parameters,
-                            headers={'Authorization': api_key})
+    test_mode = True
 
-    # Do something with response data.
-    json_data = response.json()
+    if test_mode :
+        api_data = get_test_api_data(API_QUERY_RESULTS_FOR_TESTING_PATH)
+    else:
+        response = requests.get('https://api.stormglass.io/v2/weather/point',
+                                params=parameters,
+                                headers={'Authorization': api_key})
 
-    return type(json_data), json_data
+        # read the response into json format response data.
+        json_data = response.json()
+        api_data = json_data
+
+    return api_data
 
 
 if __name__ == '__main__':

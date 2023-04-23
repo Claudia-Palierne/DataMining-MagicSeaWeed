@@ -41,14 +41,14 @@ def main():
 
         # print(area_dict_with_info)
         # devenu useless :
-        beaches_soup = url_extraction.get_soup(beaches_url)
+        # beaches_soup = url_extraction.get_soup(beaches_url)
 
         if execution_mode == 'database':
             database.initialize_db() if idx == 0 else None
             database.insert_areas(area_dict, country)
             database.insert_beaches(area_dict)
 
-        execute(execution_mode, beaches_soup)
+        execute(execution_mode, area_dict)
 
 
 def build_area_dict(areas_urls, country):
@@ -63,15 +63,14 @@ def build_area_dict(areas_urls, country):
     return area_dict, beaches_url
 
 
-def execute(mode, beaches_soup):
+def execute(mode, area_dict):
 
-    # Execution mode
-    for bs in beaches_soup:
-        beach_data = one_beach_scrapping.beach_historic(bs)
-        if mode == 'print':
-            one_beach_scrapping.print_beach_info(beach_data)
-        else:
-            database.insert_conditions(beach_data)
+    for area, beaches in area_dict.items():
+        for beach in beaches:
+            if mode == 'print':
+                one_beach_scrapping.print_beach_info(beach['info'])
+            else:
+                database.insert_conditions(beach['info'])
 
 
 def create_parser():
