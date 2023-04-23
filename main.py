@@ -34,14 +34,8 @@ def main():
         print(f'{country}: areas url extraction successful')
 
         area_dict, beaches_url = build_area_dict(areas_urls, country)
-
-        # Ce que j'ai ajouté : ya plus grequests dans ce code
         area_dict = one_beach_scrapping.get_beach_info(area_dict)
         area_dict = api.add_api_data(area_dict)
-
-        # print(area_dict_with_info)
-        # devenu useless :
-        # beaches_soup = url_extraction.get_soup(beaches_url)
 
         if execution_mode == 'database':
             database.initialize_db() if idx == 0 else None

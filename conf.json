@@ -13,5 +13,10 @@
   "WAIT_TIME_SECOND": 5,
   "RESPONSE_CODE_SUCCESS": 200,
   "DAYS_IN_WEEK": 7,
-  "IDX_AREA_NAME": -3
+  "IDX_AREA_NAME": -3,
+  "FEATURES": ["currentDirection", "currentSpeed"],
+  "API" : "https://api.stormglass.io/v2/weather/point",
+  "API_KEY_ABSOLUTE_PATH": "/Users/mathias/Programming/myrepo/stormglass_api_key.txt",
+  "API_QUERY_RESULTS_FOR_TESTING_PATH": "/Users/mathias/Programming/myrepo/test_api_data.txt",
+  "LIMIT_QUERY": 10
 }

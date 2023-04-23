@@ -1,11 +1,8 @@
 import requests
 import json
-import datetime
 
-FEATURES = ['currentDirection', 'currentSpeed']
-API_KEY_ABSOLUTE_PATH = '/Users/mathias/Programming/myrepo/stormglass_api_key.txt'
-API_QUERY_RESULTS_FOR_TESTING_PATH = '/Users/mathias/Programming/myrepo/test_api_data.txt'
-
+with open("conf.json", "r") as jsonfile:
+    CONFIG = json.load(jsonfile)
 
 def add_api_data(area_dict):
 
@@ -15,13 +12,13 @@ def add_api_data(area_dict):
         for beach in area:
             start_date, end_date = get_time_interval(beach)
             latitude, longitude = get_geo_coordinates(beach)
-            parameters = {'lat': latitude, 'lng': longitude, 'params': ','.join(FEATURES),
+            parameters = {'lat': latitude, 'lng': longitude, 'params': ','.join(CONFIG["FEATURES"]),
                           'start': start_date, 'end': end_date}
 
             api_data = query_stormglass(parameters, api_key)
 
             # add data to dictionary
-            for feature in FEATURES:
+            for feature in CONFIG["FEATURES"]:
                 beach['info'][feature] = extract_features_from_json(feature, api_data)
 
     return area_dict
@@ -29,7 +26,7 @@ def add_api_data(area_dict):
 
 def get_api_key():
 
-    with open(API_KEY_ABSOLUTE_PATH, 'r') as api_key_file:
+    with open(CONFIG["API_KEY_ABSOLUTE_PATH"], 'r') as api_key_file:
         api_key = api_key_file.read()
 
     return api_key
@@ -72,9 +69,9 @@ def query_stormglass(parameters, api_key):
     test_mode = True
 
     if test_mode :
-        api_data = get_test_api_data(API_QUERY_RESULTS_FOR_TESTING_PATH)
+        api_data = get_test_api_data(CONFIG["API_QUERY_RESULTS_FOR_TESTING_PATH"])
     else:
-        response = requests.get('https://api.stormglass.io/v2/weather/point',
+        response = requests.get(CONFIG["API"],
                                 params=parameters,
                                 headers={'Authorization': api_key})
 
