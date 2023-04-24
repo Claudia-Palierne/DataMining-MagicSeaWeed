@@ -46,6 +46,14 @@ def main():
 
 
 def build_area_dict(areas_urls, country):
+    """
+    Build "area_dict" which is a dictionary where every key is a tuple with (area_name, area_url)
+    and ech key will be a dictionary containing info for every beach
+    in the area that come from both the API and the web scrapping.
+    :param areas_urls: list of areas' url
+    :param country: a string with the name of the country
+    :return: area_dict
+    """
     area_dict = create_area_dict(areas_urls, country)
     area_dict = one_beach_scrapping.get_beach_info(area_dict)
     area_dict = api.add_api_data(area_dict)
@@ -54,6 +62,14 @@ def build_area_dict(areas_urls, country):
 
 
 def create_area_dict(areas_urls, country):
+    """
+    Build "area_dict" which is a dictionary where every key is a tuple with (area_name, area_url)
+    and ech key will be a dictionary containing info for every beach
+    in the area that come from the web scrapping.
+    :param areas_urls: list of areas' url
+    :param country: a string with the name of the country
+    :return:
+    """
     area_dict = {}
     beaches_url = []
     for url in areas_urls:
@@ -66,7 +82,14 @@ def create_area_dict(areas_urls, country):
 
 
 def execute(mode, area_dict):
-
+    """
+    This code will execute the code for each beach.
+    For example, it will print the info if the execute mode is "print".
+    Or fill the database if the mode is "database".
+    :param mode:
+    :param area_dict:
+    :return:
+    """
     for area, beaches in area_dict.items():
         for beach in beaches:
             if mode == 'print':
@@ -76,7 +99,10 @@ def execute(mode, area_dict):
 
 
 def create_parser():
-
+    """
+    Get the parameter that were given in the command line.
+    :return: the parser
+    """
     parser = argparse.ArgumentParser()
     # Gets the country input by user
     parser.add_argument("-country", type=str, choices=['ALL', 'ISRAEL', 'FRANCE', 'HAWAII'],

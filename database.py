@@ -10,7 +10,7 @@ import one_beach_scrapping
 import requests
 from bs4 import BeautifulSoup
 
-# Create a logger with the same name as the one in main.py
+# Import the logger from main.py
 logger = logging.getLogger('magicLogger.log')
 
 with open("conf.json", "r") as jsonfile:
@@ -20,8 +20,7 @@ with open("conf_sql.json", "r") as jsonfile:
     SQL_CONFIG = json.load(jsonfile)
 
 
-
-TABLES = {}
+TABLES = dict()
 TABLES['Countries'] = (
     """CREATE TABLE IF NOT EXISTS `Countries` ( 
     `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -73,7 +72,11 @@ TABLES['Conditions'] = (
 
 
 def connect_to_db(database_selected=False):
-
+    """
+    This function allows to connect python and SQL terminal.
+    :param database_selected: the name of the database that should be used
+    :return: connection object
+    """
     database = SQL_CONFIG["DB_NAME"] if database_selected else None
 
     connection = mysql.connector.connect(
