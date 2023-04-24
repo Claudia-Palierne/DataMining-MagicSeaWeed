@@ -174,7 +174,7 @@ def insert_areas(areas_dict, country):
         area_name, area_url = area
         area = (area_name, area_url, country)
         cursor.execute(add_area, area + area)
-        logging.info(f'{area} successfully inserted into db')
+        logging.info(f'{area_name} successfully inserted into db')
 
     connection.commit()
     cursor.close()
@@ -202,7 +202,7 @@ def insert_beaches(area_dict):
         for beach in beaches:
             beach_tup = (beach["name"], beach["url"], area_url, beach["latitude"], beach["longitude"])
             cursor.execute(add_beach, beach_tup + (beach["name"], beach["url"], area_url))
-            logging.info(f'{beach} successfully inserted into db')
+            logging.info(f'{beach["name"]} successfully inserted into db')
 
     connection.commit()
     cursor.close()

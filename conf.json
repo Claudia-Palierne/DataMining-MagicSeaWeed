@@ -16,7 +16,6 @@
   "IDX_AREA_NAME": -3,
   "FEATURES": ["currentDirection", "currentSpeed"],
   "API" : "https://api.stormglass.io/v2/weather/point",
-  "API_KEY_ABSOLUTE_PATH": "/Users/mathias/Programming/myrepo/stormglass_api_key.txt",
-  "API_QUERY_RESULTS_FOR_TESTING_PATH": "/Users/mathias/Programming/myrepo/test_api_data.txt",
-  "LIMIT_QUERY": 10
+  "API_KEY": "426be884-dd04-11ed-bce5-0242ac130002-426be942-dd04-11ed-bce5-0242ac130002",
+  "API_QUERY_RESULTS_PATH": "/Users/mathias/Programming/myrepo/test_api_data.txt"
 }
