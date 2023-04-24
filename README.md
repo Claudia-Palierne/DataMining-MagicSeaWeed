@@ -23,7 +23,7 @@ Please run the following in order to install all the required modules that the c
 ## How to Run
 
 * Install the required packages running the commands above (Requirements). 
-* In order for the code to run, you need to insert the absolute path that contains your own API key from Stormglass.io in the json file.
+* In order for the code to run, you need to insert your own API key of Stormglass.io in the json file.
 * Run the main Python script using python main.py with the following options passed as arguments :
   - `-mode` : whether should the data be print in the stdout or store in a SQL database (more information about this option below)
   - `-country` : the country from which you want to extract the data : Hawaii, France or Israel. You can also extract all of them with choosing the "ALL" option.
@@ -33,6 +33,8 @@ EXAMPLE : `main.py -mode database -country Hawaii` will print to the stdout all 
   - In the conf_sql.json: `"password": "*****"` input your own password
   - In the conf_sql.json: `"user": "*****"` input your own username
   
+NOTE : Since querying cost money, we created a text file with a full query that can be used in the case you passed the free number of query.
+Please feel free to contact us.
 
 ## Project Structure
 
