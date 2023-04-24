@@ -38,9 +38,7 @@ def main():
         area_dict = build_area_dict(areas_urls, country)
 
         if execution_mode == 'database':
-            database.initialize_db() if idx == 0 else None
-            database.insert_areas(area_dict, country)
-            database.insert_beaches(area_dict)
+            database.initialize_db(area_dict, country) if idx == 0 else None
 
         execute(execution_mode, area_dict)
 

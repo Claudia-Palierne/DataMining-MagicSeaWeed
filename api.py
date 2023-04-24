@@ -4,6 +4,7 @@ import json
 with open("conf.json", "r") as jsonfile:
     CONFIG = json.load(jsonfile)
 
+
 def add_api_data(area_dict):
 
     api_key = get_api_key()
@@ -42,6 +43,7 @@ def extract_features_from_json(feature, data_dict):
 
     return feature_data
 
+
 def get_geo_coordinates(beach):
     latitude = beach['latitude']
     longitude = beach['longitude']
@@ -53,7 +55,6 @@ def get_time_interval(beach):
     start_date = beach['info']['timestamp'][0]
     end_date = beach['info']['timestamp'][-1]
     return start_date, end_date
-
 
 
 def get_test_api_data(absolute_path):
@@ -68,7 +69,7 @@ def query_stormglass(parameters, api_key):
 
     test_mode = True
 
-    if test_mode :
+    if test_mode:
         api_data = get_test_api_data(CONFIG["API_QUERY_RESULTS_FOR_TESTING_PATH"])
     else:
         response = requests.get(CONFIG["API"],

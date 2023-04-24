@@ -20,7 +20,6 @@ with open("conf_sql.json", "r") as jsonfile:
     SQL_CONFIG = json.load(jsonfile)
 
 
-
 TABLES = {}
 TABLES['Countries'] = (
     """CREATE TABLE IF NOT EXISTS `Countries` ( 
@@ -238,11 +237,17 @@ def insert_conditions(beach_info):
     connection.close()
 
 
-def initialize_db():
+def initialize_db(area_dict, country):
     """
     This function initialise the database, in order to insert the scrapping data.
     :return: None
     """
+    # create the database and the needed table
     create_database()
     create_table()
+    # Insert into the table Countries
     insert_countries()
+    # Insert into the table Areas
+    insert_areas(area_dict, country)
+    # Insert int the table Beaches
+    insert_beaches(area_dict)
