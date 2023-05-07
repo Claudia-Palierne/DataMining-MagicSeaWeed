@@ -211,4 +211,5 @@ def get_beach_info(area_dict):
             bs = BeautifulSoup(request.content, "html.parser")
             beach_data = beach_historic(bs)
             beach['info'] = beach_data
+
     return area_dict

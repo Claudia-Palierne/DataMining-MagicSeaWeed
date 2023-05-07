@@ -1,9 +1,9 @@
 {
-  "HOST": "https://magicseaweed.com",
+  "HOST": "https://fr.magicseaweed.com",
   "SURF_FORECAST": {
-        "ISRAEL": "https://magicseaweed.com/Israel-Surf-Forecast/90/",
-        "FRANCE": "https://magicseaweed.com/France-Surf-Forecast/2/",
-        "HAWAII": "https://magicseaweed.com/Hawaii-Surf-Forecast/51/"
+        "ISRAEL": "https://fr.magicseaweed.com/Israel-Surf-Forecast/90/",
+        "FRANCE": "https://fr.magicseaweed.com/France-Surf-Forecast/2/",
+        "HAWAII": "https://fr.magicseaweed.com/Hawaii-Surf-Forecast/51/"
       },
   "FAKE_USER_HEADER": {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36"
@@ -17,5 +17,5 @@
   "FEATURES": ["currentDirection", "currentSpeed"],
   "API" : "https://api.stormglass.io/v2/weather/point",
   "API_KEY": "426be884-dd04-11ed-bce5-0242ac130002-426be942-dd04-11ed-bce5-0242ac130002",
-  "API_QUERY_RESULTS_PATH": "/Users/mathias/Programming/myrepo/test_api_data.txt"
+  "API_QUERY_RESULTS_PATH": "C:/Users/Klowdz/Downloads/test_api_data.txt"
 }
