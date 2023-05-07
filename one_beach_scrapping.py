@@ -18,7 +18,7 @@ def extract_timestamp(beach_soup):
     days = [a.text for a in beach_soup.find_all("h6", class_="nomargin pull-left heavy table-header-title")]
     hours = [a.text if a.text.strip() != 'Noon' else ' 12PM '
              for a in beach_soup.find_all("td", class_="nopadding-left row-title background-clear msw-js-tooltip")][:8]
-    timestamp = [datetime.strptime('2023 ' + day + hour, '%Y %A %d/%m %I%p ') for day in days for hour in hours]
+    timestamp = [datetime.strptime('2023 ' + day + hour, '%Y %A %m/%d %I%p ') for day in days for hour in hours]
     return timestamp
 
 
